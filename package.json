@@ -13,9 +13,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "keen-slider": "^6.8.6",
     "preact": "^10.27.1",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "react-router-dom": "^7.8.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",

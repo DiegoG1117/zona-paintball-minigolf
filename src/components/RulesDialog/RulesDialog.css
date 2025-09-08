@@ -1,0 +1,224 @@
+.rulesDialogBackdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.rulesDialogContent {
+    background: #0f1620;
+    border-radius: 12px;
+    padding: 0;
+    width: 412px;
+    height: 775px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Neon animated border */
+.rulesDialogContent::before,
+.rulesDialogContent::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    pointer-events: none;
+}
+
+.rulesDialogContent::before {
+    padding: 2px; /* border thickness */
+    background: linear-gradient(90deg, rgba(0,255,255,0) 0%, rgba(0,255,255,0.8) 20%, rgba(0,255,255,0) 40%),
+                linear-gradient(180deg, rgba(0,255,255,0) 0%, rgba(0,255,255,0.8) 20%, rgba(0,255,255,0) 40%),
+                linear-gradient(270deg, rgba(0,255,255,0) 0%, rgba(0,255,255,0.8) 20%, rgba(0,255,255,0) 40%),
+                linear-gradient(0deg, rgba(0,255,255,0) 0%, rgba(0,255,255,0.8) 20%, rgba(0,255,255,0) 40%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    animation: neon-move 4s linear infinite;
+}
+
+.rulesDialogContent::after {
+    border: 4px solid rgba(0, 255, 255, 0.6);
+    box-shadow: 0 0 16px rgba(0, 255, 255, 0.6), 0 0 32px rgba(0, 255, 255, 0.4);
+}
+
+@keyframes neon-move {
+    0% {
+        background-position: 0% 0%, 0% 0%, 100% 0%, 0% 100%;
+        background-size: 200% 2px, 2px 200%, 200% 2px, 2px 200%;
+    }
+    25% {
+        background-position: 100% 0%, 0% 0%, 100% 0%, 0% 100%;
+    }
+    50% {
+        background-position: 100% 0%, 0% 100%, 0% 0%, 0% 100%;
+    }
+    75% {
+        background-position: 0% 0%, 0% 100%, 0% 0%, 100% 100%;
+    }
+    100% {
+        background-position: 0% 0%, 0% 0%, 100% 0%, 0% 100%;
+    }
+}
+
+.rulesDialogHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 50px;
+    padding: 10px 15px 10px 15px;
+}
+
+.rulesDialogClose {
+    appearance: none;
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.rulesDialogCarousel {
+    flex: 1 1 auto;
+    overflow: hidden;
+    position: relative;
+    padding: 12px;
+    display: flex;
+    min-height: 0; /* permite al contenido ocupar todo el alto restante */
+}
+
+.rulesDialogSlides {
+    /* keen-slider provides layout; keep container minimal */
+    border-radius: 0;
+    overflow: hidden;
+    /* evita mostrar parte de la slide anterior */
+    height: 100%;
+    flex: 1 1 auto;
+    contain: content;
+    isolation: isolate;
+    transform: translateZ(0);
+}
+
+.rulesDialogSlide {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #fff;
+    width: 100%;
+    border-radius: 12px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transform: translateZ(0);
+    box-sizing: border-box;
+}
+
+.rulesDialogNav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+    position: relative;
+}
+
+.rulesDialogArrow {
+    padding: 8px 12px;
+    width: 40px;
+    height: 70px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    color: #fff;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.rulesDialogArrow:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.rulesDialogArrow--left {
+    left: 8px;
+}
+
+.rulesDialogArrow--right {
+    right: 8px;
+}
+
+.rulesDialogDots {
+    display: none;
+}
+
+.rulesDialogDot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #cfd8dc;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.rulesDialogDot.is-active {
+    background: #222;
+}
+
+.rulesDialogTitle {
+    margin: 0 0 8px;
+}
+
+.ruleDescription {
+    margin: 0;
+    text-align: center;
+    line-height: 1.5;
+    max-width: 320px;
+}
+
+.rulesDialogTitle.title--intro {
+    color: #1e88e5;
+}
+
+.rulesDialogTitle.title--how {
+    color: #8e24aa;
+}
+
+.rulesDialogTitle.title--tips {
+    color: #43a047;
+}
+
+.rulesDialogActions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    height: 50px;
+    padding: 10px 15px 10px 15px;
+}
+
+.rulesDialogContinue {
+    background: #18a558;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+}
+
+.buttonClose {
+    font-size: 50px;
+    color: #fff;
+    cursor: pointer;
+    padding: 0;
+}
