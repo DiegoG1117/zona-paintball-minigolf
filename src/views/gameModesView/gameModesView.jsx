@@ -6,7 +6,7 @@ function GameModesView() {
 
   return (
     <div className="gamemodes-view">
-      <h1>Game Modes</h1>
+      <h1>Modos de juego</h1>
       <div className="buttons">
         <button onClick={() => navigate('/')}>Inicio</button>
         <button onClick={() => navigate('/gamemodes/classic')}>Classic Mode</button>

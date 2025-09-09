@@ -4,6 +4,12 @@
   align-items: center;
   gap: 16px;
   padding: 24px;
+  min-height: 100vh;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  color: #e8e6ff;
 }
 
 .main-view .buttons {
@@ -11,6 +17,38 @@
   flex-wrap: wrap;
   gap: 12px;
   justify-content: center;
+}
+
+.start-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding-block: 16px; /* ~ py-6 */
+  padding-inline: 48px; /* ~ px-12 */
+  border-radius: 9999px;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 20px; /* ~ text-xl */
+  white-space: nowrap;
+  background-image: linear-gradient(90deg, #22c55e, #2563eb);
+  box-shadow: 0 25px 50px -12px rgba(34, 197, 94, 0.25);
+  border: none;
+  outline: none;
+  transition-property: transform, box-shadow, filter, opacity, background-position;
+  transition-duration: 300ms;
+}
+
+.start-button svg {
+  flex: 0 0 auto;
+}
+
+.start-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 30px 60px -12px rgba(34, 197, 94, 0.3);
+}
+
+.start-button:active {
+  transform: translateY(0);
 }
 
 

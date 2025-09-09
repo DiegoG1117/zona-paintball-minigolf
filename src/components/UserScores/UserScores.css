@@ -1,0 +1,141 @@
+.userScores {
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.userScoresTitle {
+  text-align: center;
+  margin: 0 0 4px 0;
+}
+
+.userScoresHeader {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.userScoresList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.userScoresRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px 12px;
+
+}
+
+.userScoresName {
+  font-size: 16px;
+}
+
+.userScoresControls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.scoreBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.scoreBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.scoreInput {
+  width: 64px;
+  height: 36px;
+  text-align: center;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.userScoresActions {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.newPlayerBtn,
+.confirmBtn,
+.buttonClose {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.userScoresDialogBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.32);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.userScoresDialogContent {
+  width: min(92vw, 420px);
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e5e5e5;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+}
+
+.userScoresDialogHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid #eee;
+}
+
+.userScoresDialogBody {
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.inputLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.nameInput {
+  height: 40px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  padding: 0 10px;
+}
+
+.userScoresDialogActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 12px 14px;
+  border-top: 1px solid #eee;
+}
+
+

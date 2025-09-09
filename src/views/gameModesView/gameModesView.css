@@ -6,23 +6,3 @@
   padding: 24px;
 }
 
-.gamemodes-view .buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  justify-content: center;
-}
-
-.gamemodes-view button {
-  padding: 10px 14px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  background: #f7f7f7;
-  cursor: pointer;
-}
-
-.gamemodes-view button:hover {
-  background: #eee;
-}
-
-
