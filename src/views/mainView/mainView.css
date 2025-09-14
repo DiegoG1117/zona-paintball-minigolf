@@ -1,4 +1,4 @@
-.main-view {
+.mainView {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -12,14 +12,15 @@
   color: #e8e6ff;
 }
 
-.main-view .buttons {
+.mainView .buttons {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
   justify-content: center;
+  margin-top: 172px;
 }
 
-.start-button {
+.startButton {
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -38,17 +39,30 @@
   transition-duration: 300ms;
 }
 
-.start-button svg {
+.startButton svg {
   flex: 0 0 auto;
 }
 
-.start-button:hover {
+.startButton:hover {
   transform: translateY(-1px);
   box-shadow: 0 30px 60px -12px rgba(34, 197, 94, 0.3);
 }
 
-.start-button:active {
+.startButton:active {
   transform: translateY(0);
+}
+
+
+/* Main logo sizing */
+.MainLogo {
+  width: 250px;
+  height: auto;
+  margin-top: -119px;
+}
+
+.mainView h1 {
+  font-size: 70px;
+  line-height: 1.1;
 }
 
 

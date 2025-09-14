@@ -1,57 +1,65 @@
 import { useEffect, useMemo, useState } from 'react'
 import './UserScores.css'
 
-function UserScores({ title = 'Marcador' }) {
-  const storageKey = useMemo(() => 'zpminigolf_userScores', [])
+function UserScores({ title = 'Marcador', holeId = 'global' }) {
+  // Roster of players is shared across app
+  const rosterStorageKey = 'zpminigolf_userScores'
+  // Per-hole strokes are stored under a hole-specific key
+  const perHoleStorageKey = useMemo(() => `zpminigolf_scores_hole_${holeId}`, [holeId])
 
   const [players, setPlayers] = useState([])
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [newPlayerName, setNewPlayerName] = useState('')
+  // UI for adding/resetting players moved to NewPlayersView
 
-  // Load from localStorage on mount
+  // Load roster and hole strokes from localStorage
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(storageKey)
-      if (raw) {
-        const parsed = JSON.parse(raw)
-        if (Array.isArray(parsed)) {
-          setPlayers(parsed)
+      // Load roster
+      const rawRoster = localStorage.getItem(rosterStorageKey)
+      const parsedRoster = rawRoster ? JSON.parse(rawRoster) : []
+      const basePlayers = Array.isArray(parsedRoster)
+        ? parsedRoster.map((p) => ({ id: p.id ?? crypto.randomUUID(), name: p.name ?? '', strokes: 0 }))
+        : []
+
+      // Load per-hole strokes (object map id -> strokes, or legacy array)
+      const rawHole = localStorage.getItem(perHoleStorageKey)
+      let strokesById = {}
+      if (rawHole) {
+        const parsedHole = JSON.parse(rawHole)
+        if (Array.isArray(parsedHole)) {
+          strokesById = parsedHole.reduce((acc, entry) => {
+            if (entry && entry.id) acc[entry.id] = typeof entry.strokes === 'number' ? entry.strokes : 0
+            return acc
+          }, {})
+        } else if (parsedHole && typeof parsedHole === 'object') {
+          strokesById = parsedHole
         }
       }
-    } catch (err) {
-      // ignore parse errors and start fresh
-    }
-  }, [storageKey])
 
-  // Persist players whenever they change
+      const merged = basePlayers.map((bp) => ({
+        ...bp,
+        strokes: Math.max(0, Number(strokesById[bp.id] ?? 0)),
+      }))
+      setPlayers(merged)
+    } catch {
+      // ignore parse errors and start fresh
+      setPlayers([])
+    }
+  }, [perHoleStorageKey])
+
+  // Persist only per-hole strokes whenever they change
   useEffect(() => {
     try {
-      localStorage.setItem(storageKey, JSON.stringify(players))
-    } catch (err) {
+      const strokesMap = players.reduce((acc, p) => {
+        acc[p.id] = p.strokes
+        return acc
+      }, {})
+      localStorage.setItem(perHoleStorageKey, JSON.stringify(strokesMap))
+    } catch {
       // ignore write errors (e.g., quota)
     }
-  }, [players, storageKey])
+  }, [players, perHoleStorageKey])
 
-  const handleOpenDialog = () => {
-    setIsDialogOpen(true)
-  }
-
-  const handleCloseDialog = () => {
-    setIsDialogOpen(false)
-    setNewPlayerName('')
-  }
-
-  const handleConfirmAdd = () => {
-    const name = newPlayerName.trim()
-    if (!name) return
-    const newPlayer = {
-      id: crypto.randomUUID(),
-      name,
-      strokes: 0,
-    }
-    setPlayers((prev) => [...prev, newPlayer])
-    handleCloseDialog()
-  }
+  
 
   const increment = (id) => {
     setPlayers((prev) =>
@@ -67,13 +75,15 @@ function UserScores({ title = 'Marcador' }) {
     )
   }
 
+  
+
   return (
     <div className="userScores">
       <h2 className="userScoresTitle">{title}</h2>
 
       <div className="userScoresHeader">
         <span>Nombre</span>
-        <span>Golpes</span>
+        <span className="headerRight">Golpes</span>
       </div>
 
       <div className="userScoresList">
@@ -107,50 +117,7 @@ function UserScores({ title = 'Marcador' }) {
         ))}
       </div>
 
-      <div className="userScoresActions">
-        <button className="newPlayerBtn" onClick={handleOpenDialog}>Nuevo jugador</button>
-      </div>
-
-      {isDialogOpen ? (
-        <div className="userScoresDialogBackdrop" onClick={handleCloseDialog}>
-          <div className="userScoresDialogContent" onClick={(e) => e.stopPropagation()}>
-            <div className="userScoresDialogHeader">
-              <h3>Agregar jugador</h3>
-              <button
-                className="buttonClose"
-                aria-label="Cerrar"
-                onClick={handleCloseDialog}
-              >
-                ×
-              </button>
-            </div>
-            <div className="userScoresDialogBody">
-              <label className="inputLabel">
-                Nombre
-                <input
-                  className="nameInput"
-                  type="text"
-                  placeholder="Nombre del jugador"
-                  value={newPlayerName}
-                  onChange={(e) => setNewPlayerName(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault()
-                      handleConfirmAdd()
-                    }
-                  }}
-                  autoFocus
-                />
-              </label>
-            </div>
-            <div className="userScoresDialogActions">
-              <button className="confirmBtn" onClick={handleConfirmAdd} disabled={!newPlayerName.trim()}>
-                Confirmar
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
+      
     </div>
   )
 }

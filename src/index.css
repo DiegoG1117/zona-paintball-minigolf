@@ -29,13 +29,23 @@ html, body, #root {
 body {
   margin: 0;
   min-width: 320px;
-  min-height: 100vh;
+  min-height: 100dvh;
   color: rgba(255, 255, 255, 0.87);
+}
+
+/* Fixed gradient backdrop (works reliably on iOS Safari) */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
   background:
     radial-gradient(1200px 600px at 90% -10%, rgba(107, 33, 168, 0.35), transparent 60%),
     radial-gradient(900px 500px at -10% 10%, rgba(59, 130, 246, 0.25), transparent 60%),
     radial-gradient(600px 400px at 60% 80%, rgba(236, 72, 153, 0.18), transparent 60%),
     linear-gradient(180deg, #140b2a 0%, #2b0f4a 45%, #0d0818 100%);
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 h1 {

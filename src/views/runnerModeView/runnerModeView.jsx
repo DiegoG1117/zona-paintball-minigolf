@@ -1,16 +1,13 @@
-import { useNavigate } from 'react-router-dom'
 import './runnerModeView.css'
+import HomeButton from '../../components/HomeButton/HomeButton.jsx'
+import UserScores from '../../components/UserScores/UserScores.jsx'
 
 function RunnerModeView() {
-  const navigate = useNavigate()
 
   return (
     <div className="runner-mode-view">
+      <HomeButton />
       <h1>Runner Mode</h1>
-      <div className="buttons">
-        <button onClick={() => navigate('/')}>Inicio</button>
-        <button onClick={() => navigate('/gamemodes')}>Game Modes</button>
-      </div>
       <p>Modo runner del mini-golf.</p>
     </div>
   )

@@ -80,7 +80,7 @@ function RulesDialog({ open, onClose }) {
 
    const handleContinue = () => {
       onClose?.()
-      navigate('/gamemodes')
+      navigate('/newplayers')
    }
 
    return (

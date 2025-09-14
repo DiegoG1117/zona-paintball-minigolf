@@ -1,18 +1,16 @@
-import { useNavigate } from 'react-router-dom'
 import './classicModeView.css'
 import UserScores from '../../components/UserScores/UserScores.jsx'
+import HomeButton from '../../components/HomeButton/HomeButton.jsx'
 
 function ClassicModeView() {
-  const navigate = useNavigate()
 
   return (
-    <div className="classic-mode-view">
-      <h1>Classic Mode</h1>
-      <div className="buttons">
-        <button onClick={() => navigate('/gamemodes')}>Game Modes</button>
-      </div>
+    <div className="classicModeView">
+      <HomeButton />
+      <h1>Modo clásico</h1>
       <p>Modo clásico del mini-golf.</p>
-      <UserScores title="Marcador de jugadores" />
+      <UserScores title="Hoyo 1" holeId="1" />
+      <UserScores title="Hoyo 2" holeId="2" />
     </div>
   )
 }
