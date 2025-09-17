@@ -1,0 +1,34 @@
+.confirmResetBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.confirmResetModal {
+  background: #1f2937;
+  color: #fff;
+  width: min(92vw, 460px);
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+}
+
+.confirmResetHeader { padding: 16px 18px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.confirmResetBody { padding: 16px 18px; opacity: 0.9; }
+
+.confirmResetActions {
+  padding: 12px 18px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.btnCancel { background: #374151; color: #fff; border: none; border-radius: 8px; padding: 8px 12px; }
+.btnConfirm { background: #ef4444; color: #fff; border: none; border-radius: 8px; padding: 8px 12px; }
+
+
+

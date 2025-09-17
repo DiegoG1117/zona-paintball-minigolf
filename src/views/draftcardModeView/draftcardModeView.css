@@ -3,25 +3,12 @@
   flex-direction: column;
   align-items: center;
   gap: 16px;
-  padding: 24px;
   min-height: 100dvh;
 }
 
-.draftcard-mode-view .buttons {
-  display: flex;
-  gap: 12px;
-}
 
-.draftcard-mode-view button {
-  padding: 10px 14px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  background: #f7f7f7;
-  cursor: pointer;
-}
+/* Draw and player grid styles moved to RadomCardsSelected.css */
 
-.draftcard-mode-view button:hover {
-  background: #eee;
-}
+
 
 

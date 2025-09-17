@@ -6,6 +6,7 @@ import ClassicModeView from './views/classicModeView/classicModeView.jsx'
 import RunnerModeView from './views/runnerModeView/runnerModeView.jsx'
 import DraftcardModeView from './views/draftcardModeView/draftcardModeView.jsx'
 import NewPlayersView from './views/newPlayersView/newPlayersView.jsx'
+import ResultsView from './views/resultsView/resultsView.jsx'
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <Route path="/gamemodes/classic" element={<ClassicModeView />} />
       <Route path="/gamemodes/runner" element={<RunnerModeView />} />
       <Route path="/gamemodes/draftcard" element={<DraftcardModeView />} />
+      <Route path="/results" element={<ResultsView />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )

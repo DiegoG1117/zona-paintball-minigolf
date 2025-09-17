@@ -1,0 +1,49 @@
+.radomCardsSelected { width: 100%; }
+
+.drawButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(90deg, #a855f7 0%, #ec4899 100%);
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  padding: 12px 18px;
+  font-size: 18px;
+  font-weight: 700;
+  box-shadow: 0 6px 18px rgba(236, 72, 153, 0.35);
+}
+
+.drawButton:disabled { opacity: 0.6; }
+
+.drawButtonIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 999px;
+}
+
+.drawButtonLabel { line-height: 1; }
+
+.playerButtons {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+.playerButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.cardIcon { color: #16a34a; }
+
+

@@ -1,0 +1,69 @@
+.resultsTable {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 12px;
+}
+
+.resultsTitle {
+  margin: 8px 0 0 6px;
+}
+
+.resultsHoleTitle {
+  margin: 10px 0 0 6px;
+}
+
+.resultsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.resultsBlock {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px 12px 10px 11px; /* +5px from previous to separate from border */
+}
+
+.resultsHeader {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  font-weight: 600;
+}
+
+.resultsPlayerName {
+  justify-self: start; /* force far-left */
+  text-align: left;
+  font-weight: 700;
+  font-size: 18px; /* +2px */
+}
+
+.resultsHeaderRight {
+  opacity: 0.9;
+  font-weight: 700;
+  font-size: 18px; /* +2px */
+}
+
+.resultsRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.resultsHole {
+  opacity: 0.9;
+  justify-self: start; /* force far-left */
+}
+
+.resultsTime {
+  font-variant-numeric: tabular-nums;
+}
+
+.resultsEmpty {
+  text-align: center;
+  opacity: 0.75;
+}
+
+

@@ -1,0 +1,84 @@
+.scoreTimer {
+  width: 92%;
+  min-height: 60px;
+  margin: 5px;
+  padding: 8px 12px;
+  border: 2px solid #fff;
+  border-radius: 8px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 16px;
+  row-gap: 6px;
+}
+
+.scoreTimer.is-running {
+  min-height: 98px; /* grow to make room for second row */
+}
+
+.scoreTimerTitle {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+  margin: 0;
+  text-align: left;
+  font-size: 34px;
+  line-height: 1.1;
+}
+
+.timerDisplay {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+  font-size: 24px; /* smaller than title */
+  font-weight: 700;
+  text-align: center;
+}
+
+.startButton {
+  grid-column: 3 / 4;
+  grid-row: 1 / 2;
+  background: #18a558;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 16px;
+  cursor: pointer;
+}
+
+.startButton--top {
+  justify-self: end;
+}
+
+.actionsRow {
+  grid-column: 1 / 4;
+  grid-row: 2 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.runningActions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.finishButton {
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 16px;
+  cursor: pointer;
+}
+
+.cancelButton {
+  background: #9ca3af;
+  color: #111827;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 16px;
+  cursor: pointer;
+}
+
+

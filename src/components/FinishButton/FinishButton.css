@@ -1,0 +1,33 @@
+.finishButtonWrapper {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  padding: 16px 12px;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(18, 0, 43, 0.6) 30%, rgba(18, 0, 43, 0.9) 100%);
+}
+
+.finishButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(90deg, #1dd38a 0%, #1976ff 100%);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+}
+
+.finishButton:active {
+  transform: translateY(1px);
+}
+
+.flagIcon {
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,.3));
+}
+
+

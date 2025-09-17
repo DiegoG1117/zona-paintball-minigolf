@@ -1,0 +1,84 @@
+.userRandomCardBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.userRandomCardModal {
+  background: #fff;
+  border-radius: 12px;
+  width: min(92vw, 420px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.userRandomCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.userRandomCardClose {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.userRandomCardBody {
+  padding: 16px;
+}
+
+.userRandomCardCardTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.userRandomCardDescription {
+  color: #333;
+}
+
+.userRandomCardActions {
+  padding: 12px 16px;
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid #eee;
+}
+
+.userRandomCardOk {
+  background: #0ea5a3;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+}
+
+/* Themed backgrounds per card id (camelCase with component prefix) */
+.userRandomCardMenos1 .userRandomCardHeader { color: #fff; }
+.userRandomCardMenos1 { background: linear-gradient(135deg, #34d399, #10b981); color: #fff; }
+.userRandomCardMenos1 .userRandomCardModal, .userRandomCardMenos1 .userRandomCardBody, .userRandomCardMenos1 .userRandomCardActions { background: transparent; }
+
+.userRandomCardRetroceso .userRandomCardHeader { color: #fff; }
+.userRandomCardRetroceso { background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; }
+.userRandomCardRetroceso .userRandomCardModal, .userRandomCardRetroceso .userRandomCardBody, .userRandomCardRetroceso .userRandomCardActions { background: transparent; }
+
+.userRandomCardGolpeReverso .userRandomCardHeader { color: #fff; }
+.userRandomCardGolpeReverso { background: linear-gradient(135deg, #06b6d4, #3b82f6); color: #fff; }
+.userRandomCardGolpeReverso .userRandomCardModal, .userRandomCardGolpeReverso .userRandomCardBody, .userRandomCardGolpeReverso .userRandomCardActions { background: transparent; }
+
+.userRandomCardLanzamientoMano .userRandomCardHeader { color: #fff; }
+.userRandomCardLanzamientoMano { background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; }
+.userRandomCardLanzamientoMano .userRandomCardModal, .userRandomCardLanzamientoMano .userRandomCardBody, .userRandomCardLanzamientoMano .userRandomCardActions { background: transparent; }
+
+.userRandomCardMas2 .userRandomCardHeader { color: #fff; }
+.userRandomCardMas2 { background: linear-gradient(135deg, #8b5cf6, #ec4899); color: #fff; }
+.userRandomCardMas2 .userRandomCardModal, .userRandomCardMas2 .userRandomCardBody, .userRandomCardMas2 .userRandomCardActions { background: transparent; }
+
+
