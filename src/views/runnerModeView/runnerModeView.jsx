@@ -49,6 +49,8 @@ function RunnerModeView() {
     <div className="runner-mode-view">
       <HomeButton onClick={handleHomeClick} />
       <h1>Runner Mode</h1>
+      <p className="infoText">Completa los hoyos antes de que se acabe el tiempo. Un jugador controla el
+      cronómetro: inicia al empezar y detiene al terminar. Al finalizar cada hoyo, pulsa el botón rojo y registra el tiempo seleccionando al jugador en la lista.</p>
       <ScoreTimer title="Hoyo 1" setTimer={{ minutes: 0, seconds: 30 }} onSaved={(data) => saveResult(data, 'Hoyo 1')} />
       <ScoreTimer title="Hoyo 2" setTimer={{ minutes: 1, seconds: 30 }} onSaved={(data) => saveResult(data, 'Hoyo 2')} />
       <ScoreTimer title="Hoyo 3" setTimer={{ minutes: 1, seconds: 0}} onSaved={(data) => saveResult(data, 'Hoyo 3')} />

@@ -220,6 +220,18 @@ h2 {
     margin-top: 10px;
 }
 
+/* Tamaño específico para la imagen de la regla #1 */
+.imgRules--0 {
+    height: 300px; /* solicitado */
+    width: 230px;  /* solicitado */
+}
+
+.imgRules--3 {
+    height: 230px;
+    width: 300px;
+    margin-top: 25px;
+}
+
 /* Prefer modern color-mix when available */
 @supports (color: color-mix(in oklab, red, red)) {
     .rulesDialogBackdrop {

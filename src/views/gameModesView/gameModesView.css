@@ -1,4 +1,4 @@
-.gamemodes-view {
+.gameModesView {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -7,13 +7,13 @@
   min-height: 100dvh;
 }
 
-.topbar {
+.topBar {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
-.back-btn {
+.backBtn {
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.15);
   color: #e5e7eb;
@@ -22,7 +22,7 @@
   cursor: pointer;
 }
 
-.modes-grid {
+.modesGrid {
   width: 100%;
   max-width: 1100px;
   display: grid;
@@ -31,12 +31,12 @@
 }
 
 @media (min-width: 860px) {
-  .modes-grid {
+  .modesGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-.mode-card {
+.modeCard {
   position: relative;
   background: radial-gradient(120% 140% at 10% 10%, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 60%, rgba(255,255,255,0.01) 100%);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -48,13 +48,13 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) inset, 0 8px 20px rgba(0,0,0,0.25);
 }
 
-.mode-card:hover {
+.modeCard:hover {
   transform: translateY(-2px);
   border-color: rgba(99, 102, 241, 0.45);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) inset, 0 12px 30px rgba(99, 102, 241, 0.25);
 }
 
-.mode-card .mode-icon {
+.modeCard .modeIcon {
   width: 56px;
   height: 56px;
   display: grid;
@@ -65,28 +65,28 @@
   font-size: 28px;
 }
 
-.mode-title {
+.modeTitle {
   margin: 0 0 10px 0;
   font-size: 22px;
 }
 
-.mode-desc {
+.modeDesc {
   margin: 0 0 14px 0;
   color: #b6b9c3;
   line-height: 1.5;
 }
 
-.mode-card.classic:hover {
+.modeCard.classic:hover {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) inset, 0 12px 30px rgba(16, 185, 129, 0.25);
   border-color: rgba(16, 185, 129, 0.45);
 }
 
-.mode-card.timer:hover {
+.modeCard.timer:hover {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) inset, 0 12px 30px rgba(59, 130, 246, 0.25);
   border-color: rgba(59, 130, 246, 0.45);
 }
 
-.mode-card.draft:hover {
+.modeCard.draft:hover {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) inset, 0 12px 30px rgba(244, 114, 182, 0.25);
   border-color: rgba(244, 114, 182, 0.45);
 }

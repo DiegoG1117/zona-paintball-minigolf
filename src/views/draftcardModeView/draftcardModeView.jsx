@@ -34,10 +34,10 @@ function DraftcardModeView() {
   }
 
   return (
-    <div className="draftcard-mode-view">
+    <div className="draftcardModeView">
       <HomeButton onClick={handleHomeClick} />
-      <h1>Draftcard Mode</h1>
-      <p>Modo de cartas especiales: cada jugador recibe una carta aleatoria.</p>
+      <h1>Modo MiniUno</h1>
+      <p className="infoText">Modo de cartas especiales: cada jugador recibe una carta aleatoria. esta carta solo se puede usar 1 vez por hoyo. en este modo de juego tambien se suman los puntos de los golpes de cada jugador y tambien si sales de la pista se suman 3 puntos.</p>
       <UserScores title="Hoyo 1" />
       <RadomCardsSelected />
       <UserScores title="Hoyo 2" />

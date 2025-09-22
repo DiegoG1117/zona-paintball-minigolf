@@ -40,7 +40,7 @@ function ResultsView() {
               const s = Number(strokes)
               strokeByPlayer[pid] = (strokeByPlayer[pid] || 0) + (Number.isFinite(s) ? s : 0)
             })
-          } catch {}
+          } catch (err) { void err }
         })
 
         results = playerList.map((p) => ({
@@ -52,13 +52,13 @@ function ResultsView() {
         // In stroke play, lower score is better. Sort ascending
         results.sort((a, b) => (a.score ?? 0) - (b.score ?? 0))
       } else {
-        // 2) Runner mode: sum elapsedMs across holes per player; smaller is better
+        // Runner mode: sum elapsedMs across holes per player; smaller is better
         let runner = {}
         try {
           const rawRunner = localStorage.getItem(runnerKey)
           const parsed = rawRunner ? JSON.parse(rawRunner) : {}
           runner = parsed && typeof parsed === 'object' ? parsed : {}
-        } catch {}
+        } catch (err) { void err }
 
         const totalMsByPlayer = {}
         Object.entries(runner).forEach(([pid, holeMap]) => {
@@ -84,6 +84,44 @@ function ResultsView() {
     const from = location.state?.returnTo
     if (from && typeof from === 'string') navigate(from)
     else navigate('/gamemodes')
+  }
+
+  const handleExit = async () => {
+    try {
+      try { localStorage.clear() } catch (err) { void err }
+      try { sessionStorage && sessionStorage.clear() } catch (err) { void err }
+
+      if (window && 'caches' in window) {
+        try {
+          const names = await caches.keys()
+          await Promise.all(names.map((n) => caches.delete(n)))
+        } catch (err) { void err }
+      }
+
+      if (navigator && 'serviceWorker' in navigator) {
+        try {
+          const regs = await navigator.serviceWorker.getRegistrations()
+          await Promise.all(regs.map((r) => r.unregister()))
+        } catch (err) { void err }
+      }
+
+      if (typeof indexedDB !== 'undefined' && indexedDB && 'databases' in indexedDB) {
+        try {
+          const dbs = await indexedDB.databases()
+          await Promise.all(
+            (dbs || []).map((db) => {
+              if (!db || !db.name) return Promise.resolve()
+              return new Promise((resolve) => {
+                const req = indexedDB.deleteDatabase(db.name)
+                req.onsuccess = req.onerror = req.onblocked = () => resolve()
+              })
+            })
+          )
+        } catch (err) { void err }
+      }
+    } finally {
+      navigate('/', { replace: true })
+    }
   }
 
   return (
@@ -114,6 +152,7 @@ function ResultsView() {
 
       <div className="actions">
         <button className="replayButton" onClick={handleReplay}>Volver a jugar</button>
+        <button className="exitButton" onClick={handleExit}>Salir</button>
       </div>
     </div>
   )

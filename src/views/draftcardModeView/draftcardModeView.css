@@ -1,9 +1,16 @@
-.draftcard-mode-view {
+.draftcardModeView {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 16px;
   min-height: 100dvh;
+}
+
+.infoText {
+  margin-left: 40px;
+  margin-right: 40px;
+  margin-top: -30px;
+  text-align: justify;
 }
 
 

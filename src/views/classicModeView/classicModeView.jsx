@@ -34,7 +34,8 @@ function ClassicModeView() {
     <div className="classicModeView">
       <HomeButton onClick={handleHomeClick} />
       <h1>Modo clásico</h1>
-      <p>Modo clásico del mini-golf.</p>
+      <p className="infoText">Gana quien tenga menos puntos al final. Cada
+      golpe cuenta como un punto. Recuerda sumar +3 si sales de la pista.</p>
       <UserScores title="Hoyo 1" holeId="1" />
       <UserScores title="Hoyo 2" holeId="2" />
 

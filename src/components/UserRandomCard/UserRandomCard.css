@@ -42,7 +42,7 @@
 }
 
 .userRandomCardDescription {
-  color: #333;
+  color: #fff;
 }
 
 .userRandomCardActions {
@@ -53,9 +53,9 @@
 }
 
 .userRandomCardOk {
-  background: #0ea5a3;
+  background: none;
   color: #fff;
-  border: none;
+  border: 1px solid white;
   border-radius: 8px;
   padding: 8px 14px;
 }

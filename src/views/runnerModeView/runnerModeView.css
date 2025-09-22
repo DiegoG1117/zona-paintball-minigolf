@@ -6,3 +6,10 @@
   min-height: 100dvh;
   position: relative;
 }
+
+.infoText {
+  margin-left: 40px;
+  margin-right: 40px;
+  margin-top: -30px;
+  text-align: justify;
+}

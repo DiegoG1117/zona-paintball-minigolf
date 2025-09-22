@@ -4,6 +4,9 @@ import { useKeenSlider } from 'keen-slider/react'
 import './RulesDialog.css'
 import 'keen-slider/keen-slider.min.css'
 import rule1 from '../../img/Rule1.png'
+import rule2 from '../../img/Rule2.png'
+import rule3 from '../../img/Rule3.png'
+import rule4 from '../../img/Rule4.png'
 
 function RulesDialog({ open, onClose }) {
    const navigate = useNavigate()
@@ -44,7 +47,7 @@ function RulesDialog({ open, onClose }) {
          bgClass: 'slide--two',
          text:
             'Si la bola sale por fuera de la pista, debes sumarte +3 puntos. Colócala nuevamente en el punto de salida o en el último punto válido indicado por el grupo.',
-         image: rule1,
+         image: rule2,
       },
       {
          id: 2,
@@ -52,8 +55,8 @@ function RulesDialog({ open, onClose }) {
          titleClass: 'title--tips',
          bgClass: 'slide--three',
          text:
-            'Si la bola queda muy pegada a un muro, muévela perpendicularmente solo la distancia del palo de golf para poder golpear mejor. No hay penalización por este ajuste.',
-         image: rule1,
+            'Si la bola queda muy pegada a un muro, muévela solo la distancia del palo de golf para poder golpear mejor. No hay penalización por este ajuste.',
+         image: rule3,
       },
       {
          id: 3,
@@ -62,7 +65,7 @@ function RulesDialog({ open, onClose }) {
          bgClass: 'slide--four',
          text:
             'Lleva el marcador desde esta aplicación: suma un punto por cada golpe y recuerda añadir +3 si sales de la pista. También puedes agregar tantos jugadores como quieras.',
-         image: rule1,
+         image: rule4,
       },
    ]
 
@@ -100,7 +103,7 @@ function RulesDialog({ open, onClose }) {
                            <p className="ruleDescription">{slide.text}</p>
                         </div>
                         <div className="rulesDialogSlidesImage">
-                           {slide.image ? <img src={slide.image} className="imgRules" /> : null}
+                           {slide.image ? <img src={slide.image} className={`imgRules imgRules--${slide.id}`} /> : null}
                         </div>
                      </div>
                   ))}
