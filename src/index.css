@@ -1,3 +1,25 @@
+/* iOS tap/zoom behavior fixes */
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Ensure interactive elements are at least 16px to avoid iOS zoom on tap */
+button,
+input,
+select,
+textarea,
+[role="button"] {
+  font-size: 16px;
+}
+
+/* Reduce accidental double‑tap zoom on controls */
+button,
+a,
+[role="button"] {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
