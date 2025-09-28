@@ -34,7 +34,6 @@
   cursor: not-allowed;
   background: #b8b8b8;
   box-shadow: none;
-  opacity: 0.85;
 }
 
 .finishButton[disabled]:hover,

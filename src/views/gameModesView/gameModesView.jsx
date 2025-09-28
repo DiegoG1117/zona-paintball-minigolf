@@ -7,7 +7,7 @@ function GameModesView() {
   return (
     <div className="gameModesView">
       <div className="topBar">
-        <button onClick={() => navigate('/newplayers')} aria-label="Volver" style={{ position: 'absolute', top: '10px', left: '10px' }}>←</button>
+        <button type="button" className="backBtn" onClick={() => navigate('/newplayers')} aria-label="Volver">←</button>
         <h1>Modos de juego</h1>
       </div>
 
