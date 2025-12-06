@@ -53,9 +53,11 @@ function RunnerModeView() {
       cronómetro: inicia al empezar y detiene al terminar. Al finalizar cada hoyo, pulsa el botón rojo y registra el tiempo seleccionando al jugador en la lista.</p>
       <ScoreTimer title="Hoyo 1" setTimer={{ minutes: 0, seconds: 30 }} onSaved={(data) => saveResult(data, 'Hoyo 1')} />
       <ScoreTimer title="Hoyo 2" setTimer={{ minutes: 1, seconds: 30 }} onSaved={(data) => saveResult(data, 'Hoyo 2')} />
-      <ScoreTimer title="Hoyo 3" setTimer={{ minutes: 1, seconds: 0}} onSaved={(data) => saveResult(data, 'Hoyo 3')} />
+      <ScoreTimer title="Hoyo 3" setTimer={{ minutes: 0, seconds: 50}} onSaved={(data) => saveResult(data, 'Hoyo 3')} />
+      <ScoreTimer title="Hoyo 4" setTimer={{ minutes: 0, seconds: 40}} onSaved={(data) => saveResult(data, 'Hoyo 4')} />
+      <ScoreTimer title="Hoyo 5" setTimer={{ minutes: 0, seconds: 40}} onSaved={(data) => saveResult(data, 'Hoyo 5')} />
 
-      <ResultsTable holes={["Hoyo 1", "Hoyo 2", "Hoyo 3"]} refreshKey={refreshKey} />
+      <ResultsTable holes={["Hoyo 1", "Hoyo 2", "Hoyo 3", "Hoyo 4", "Hoyo 5"]} refreshKey={refreshKey} />
 
       <ConfirmResetDialog
         isOpen={showConfirm}

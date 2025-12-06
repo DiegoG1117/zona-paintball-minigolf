@@ -42,6 +42,12 @@ function DraftcardModeView() {
       <RadomCardsSelected />
       <UserScores title="Hoyo 2" />
       <RadomCardsSelected />
+      <UserScores title="Hoyo 3" />
+      <RadomCardsSelected />
+      <UserScores title="Hoyo 4" />
+      <RadomCardsSelected />
+      <UserScores title="Hoyo 5" />
+      <RadomCardsSelected />
 
       <ConfirmResetDialog
         isOpen={showConfirm}

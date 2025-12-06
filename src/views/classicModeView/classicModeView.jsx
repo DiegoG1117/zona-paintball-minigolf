@@ -38,6 +38,9 @@ function ClassicModeView() {
       golpe cuenta como un punto. Recuerda sumar +3 si sales de la pista.</p>
       <UserScores title="Hoyo 1" holeId="1" />
       <UserScores title="Hoyo 2" holeId="2" />
+      <UserScores title="Hoyo 3" holeId="3" />
+      <UserScores title="Hoyo 4" holeId="4" />
+      <UserScores title="Hoyo 5" holeId="5" />
 
       <ConfirmResetDialog
         isOpen={showConfirm}
