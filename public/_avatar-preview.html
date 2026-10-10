@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Iconos de perfil</title>
+  <style>
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #2a1848; color: #efe9ff; font-family: system-ui, sans-serif; }
+    .card { width: min(420px, 92vw); background: rgba(17, 24, 39, 0.72); border: 1px solid rgba(236, 72, 153, 0.28); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+    h1 { margin: 0; text-align: center; font-size: 28px; }
+    h2 { margin: 0; font-size: 14px; }
+    .preview { width: 96px; height: 96px; margin: 0 auto; border-radius: 50%; overflow: hidden; background: rgba(255,255,255,0.15); }
+    .preview img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+    button { aspect-ratio: 1; padding: 0; border-radius: 50%; border: 2px solid transparent; background: rgba(255,255,255,0.06); overflow: hidden; cursor: pointer; }
+    button.is-selected { border-color: #60a5fa; background: rgba(96, 165, 250, 0.16); }
+    button img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    #picked { margin: 0; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Mi perfil</h1>
+    <div class="preview"><img id="current" alt="Pelota" src="/avatars/golf-ball.webp?v=3" width="96" height="96" /></div>
+    <h2>Icono de perfil</h2>
+    <div class="grid" id="grid"></div>
+    <p id="picked">Seleccionado: golf-ball</p>
+  </div>
+  <script>
+    const icons = [
+      ['helmet-green','Soldado verde'],
+      ['helmet-blue','Soldado azul'],
+      ['helmet-red','Soldado rojo'],
+      ['helmet-pink','Soldado rosa'],
+      ['golfer-red','Golfista rojo'],
+      ['golfer-swing','Golfista en swing'],
+      ['golfer-blue','Golfista azul'],
+      ['golfer-pink','Golfista rosa'],
+      ['golf-ball','Pelota'],
+      ['golf-club','Palo de golf'],
+    ]
+    const grid = document.getElementById('grid')
+    const current = document.getElementById('current')
+    const picked = document.getElementById('picked')
+    let selected = 'golf-ball'
+    for (const [id, label] of icons) {
+      const btn = document.createElement('button')
+      btn.type = 'button'
+      btn.dataset.id = id
+      btn.setAttribute('aria-label', label)
+      if (id === selected) btn.classList.add('is-selected')
+      btn.innerHTML = `<img src="/avatars/${id}.webp?v=3" alt="" width="64" height="64" />`
+      btn.addEventListener('click', () => {
+        selected = id
+        current.src = `/avatars/${id}.webp?v=3`
+        current.alt = label
+        picked.textContent = `Seleccionado: ${id}`
+        for (const el of grid.querySelectorAll('button')) el.classList.toggle('is-selected', el.dataset.id === id)
+      })
+      grid.appendChild(btn)
+    }
+  </script>
+</body>
+</html>

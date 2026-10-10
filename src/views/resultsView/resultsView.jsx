@@ -1,128 +1,69 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import './resultsView.css'
+import { computeLocalResults, formatGameScore } from '../../game/computeLocalResults.js'
+import { MODE_ROUTES } from '../../game/constants.js'
+import { useAuth } from '../../context/AuthContext.jsx'
+import { useMatch } from '../../context/MatchContext.jsx'
 
 function ResultsView() {
   const navigate = useNavigate()
   const location = useLocation()
-  const rosterStorageKey = useMemo(() => 'zpminigolf_userScores', [])
-  const perHolePrefix = useMemo(() => 'zpminigolf_scores_hole_', [])
-  const runnerKey = useMemo(() => 'zpminigolf_runner_results', [])
+  const { user, profile } = useAuth()
+  const {
+    match,
+    isHost,
+    isOnlineMatch,
+    tableResults,
+    saveStatus,
+    saveError,
+    personalRecord,
+    finishMatch,
+    leaveFinishedMatch,
+  } = useMatch()
 
-  const [podium, setPodium] = useState([])
-
-  useEffect(() => {
+  const localComputed = useMemo(() => {
     try {
-      const rawRoster = localStorage.getItem(rosterStorageKey)
-      const players = rawRoster ? JSON.parse(rawRoster) : []
-      const playerList = Array.isArray(players) ? players : []
-
-      // Determine mode from where we came from; fallback to storage keys
-      const cameFrom = location.state?.returnTo || ''
-      const cameFromRunner = typeof cameFrom === 'string' && cameFrom.includes('/gamemodes/runner')
-
-      // Enumerate storage keys robustly
-      const storageKeys = []
-      for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i)
-        if (k) storageKeys.push(k)
-      }
-      const holeKeys = storageKeys.filter((k) => k && k.startsWith(perHolePrefix))
-
-      let results = []
-
-      if (!cameFromRunner && holeKeys.length > 0) {
-        const strokeByPlayer = {}
-        holeKeys.forEach((hk) => {
-          try {
-            const perHole = JSON.parse(localStorage.getItem(hk) || '{}') || {}
-            Object.entries(perHole).forEach(([pid, strokes]) => {
-              const s = Number(strokes)
-              strokeByPlayer[pid] = (strokeByPlayer[pid] || 0) + (Number.isFinite(s) ? s : 0)
-            })
-          } catch (err) { void err }
-        })
-
-        results = playerList.map((p) => ({
-          id: p.id,
-          name: p.name,
-          score: strokeByPlayer[p.id] ?? 0,
-        }))
-
-        // In stroke play, lower score is better. Sort ascending
-        results.sort((a, b) => (a.score ?? 0) - (b.score ?? 0))
-      } else {
-        // Runner mode: sum elapsedMs across holes per player; smaller is better
-        let runner = {}
-        try {
-          const rawRunner = localStorage.getItem(runnerKey)
-          const parsed = rawRunner ? JSON.parse(rawRunner) : {}
-          runner = parsed && typeof parsed === 'object' ? parsed : {}
-        } catch (err) { void err }
-
-        const totalMsByPlayer = {}
-        Object.entries(runner).forEach(([pid, holeMap]) => {
-          const total = Object.values(holeMap || {}).reduce((acc, v) => acc + (Number(v) || 0), 0)
-          totalMsByPlayer[pid] = total
-        })
-
-        results = playerList.map((p) => ({
-          id: p.id,
-          name: p.name,
-          score: totalMsByPlayer[p.id] ?? Number.POSITIVE_INFINITY,
-        }))
-        results.sort((a, b) => (a.score ?? 0) - (b.score ?? 0))
-      }
-
-      setPodium(results.slice(0, 3))
+      return computeLocalResults({ returnTo: location.state?.returnTo || '' })
     } catch {
-      setPodium([])
+      return { results: [], mode: 'classic' }
     }
-  }, [rosterStorageKey, perHolePrefix, runnerKey, location.state])
+  }, [location.state])
+
+  const online = isOnlineMatch || Boolean(location.state?.fromMatch && match)
+  const allResults = online && tableResults.length > 0 ? tableResults : localComputed.results
+  const podium = allResults.slice(0, 3)
+  const mode = online ? (match?.mode || localComputed.mode) : localComputed.mode
+
+  const myResult = user
+    ? allResults.find((r) => r.id === user.uid)
+    : null
 
   const handleReplay = () => {
+    if (online) {
+      navigate('/', { replace: true })
+      return
+    }
     const from = location.state?.returnTo
     if (from && typeof from === 'string') navigate(from)
     else navigate('/gamemodes')
   }
 
-  const handleExit = async () => {
+  const handleExit = () => {
+    leaveFinishedMatch()
+    navigate('/', { replace: true })
+  }
+
+  const handleHostFinish = async () => {
     try {
-      try { localStorage.clear() } catch (err) { void err }
-      try { sessionStorage && sessionStorage.clear() } catch (err) { void err }
-
-      if (window && 'caches' in window) {
-        try {
-          const names = await caches.keys()
-          await Promise.all(names.map((n) => caches.delete(n)))
-        } catch (err) { void err }
-      }
-
-      if (navigator && 'serviceWorker' in navigator) {
-        try {
-          const regs = await navigator.serviceWorker.getRegistrations()
-          await Promise.all(regs.map((r) => r.unregister()))
-        } catch (err) { void err }
-      }
-
-      if (typeof indexedDB !== 'undefined' && indexedDB && 'databases' in indexedDB) {
-        try {
-          const dbs = await indexedDB.databases()
-          await Promise.all(
-            (dbs || []).map((db) => {
-              if (!db || !db.name) return Promise.resolve()
-              return new Promise((resolve) => {
-                const req = indexedDB.deleteDatabase(db.name)
-                req.onsuccess = req.onerror = req.onblocked = () => resolve()
-              })
-            })
-          )
-        } catch (err) { void err }
-      }
-    } finally {
-      navigate('/', { replace: true })
+      await finishMatch()
+    } catch {
+      // error is surfaced via saveError; keep local scores
     }
   }
+
+  const showHostFinish = online && isHost && match?.status === 'playing'
+  const waitingForHost = online && !isHost && match?.status === 'playing'
 
   return (
     <div className="resultsView">
@@ -132,11 +73,37 @@ function ResultsView() {
             <div className="crown" aria-hidden>👑</div>
             <div className="winnerTitle">¡GANADOR!</div>
             <div className="winnerName">{podium[0].name}</div>
+            <div className="winnerScore">{formatGameScore(mode, podium[0].score)}</div>
           </>
         ) : (
           <div className="winnerTitle">Resultados</div>
         )}
       </div>
+
+      {myResult && Number.isFinite(myResult.score) ? (
+        <div className="saveBanner">
+          <p>Tu puntuación: {formatGameScore(mode, myResult.score)}</p>
+          {!user ? (
+            <p className="saveHint">Regístrate para guardar tu puntuación y aparecer en el ranking.</p>
+          ) : online && match?.status === 'finished' ? (
+            <>
+              {saveStatus === 'saving' ? <p className="saveHint">Guardando resultado...</p> : null}
+              {saveStatus === 'saved' ? <p className="saveOk">¡Puntuación guardada!</p> : null}
+              {personalRecord ? <p className="saveRecord">🏆 ¡Nuevo récord personal!</p> : null}
+              {saveStatus === 'error' ? (
+                <p className="saveHint">No se pudo guardar ahora. Tu resultado sigue visible aquí.</p>
+              ) : null}
+            </>
+          ) : !online && profile ? (
+            <p className="saveHint">Las partidas locales no entran al ranking. Crea una partida online para guardar tu marca.</p>
+          ) : null}
+        </div>
+      ) : null}
+
+      {saveError ? <p className="saveHint">{saveError}</p> : null}
+      {waitingForHost ? (
+        <p className="saveHint">Esperando a que el anfitrión finalice la partida...</p>
+      ) : null}
 
       <div className="podiumCard">
         <h3 className="podiumTitle">Podio Final</h3>
@@ -145,19 +112,45 @@ function ResultsView() {
             <div key={p.id} className={`podiumPlace place-${idx + 1}`}>
               <div className="placeNumber">{idx + 1}</div>
               <div className="placeName">{p.name}</div>
+              <div className="placeScore">{formatGameScore(mode, p.score)}</div>
             </div>
           ))}
         </div>
       </div>
 
+      {allResults.length > 3 ? (
+        <div className="fullList">
+          {allResults.slice(3).map((p, idx) => (
+            <div key={p.id} className="fullListRow">
+              <span>{idx + 4}. {p.name}</span>
+              <span>{formatGameScore(mode, p.score)}</span>
+            </div>
+          ))}
+        </div>
+      ) : null}
+
       <div className="actions">
-        <button className="replayButton" onClick={handleReplay}>Volver a jugar</button>
-        <button className="exitButton" onClick={handleExit}>Salir</button>
+        {showHostFinish ? (
+          <button className="replayButton" onClick={handleHostFinish} disabled={saveStatus === 'saving'}>
+            {saveStatus === 'saving' ? 'Guardando...' : 'Finalizar partida'}
+          </button>
+        ) : null}
+        {!online || match?.status === 'finished' ? (
+          <>
+            <button className="replayButton" onClick={handleReplay}>
+              {online ? 'Crear o unirse a otra' : 'Volver a jugar'}
+            </button>
+            <button className="exitButton" onClick={handleExit}>Salir</button>
+          </>
+        ) : null}
+        {online && match?.status === 'playing' && isHost ? (
+          <button className="exitButton" type="button" onClick={() => navigate(MODE_ROUTES[match.mode] || '/gamemodes')}>
+            Volver al juego
+          </button>
+        ) : null}
       </div>
     </div>
   )
 }
 
 export default ResultsView
-
-

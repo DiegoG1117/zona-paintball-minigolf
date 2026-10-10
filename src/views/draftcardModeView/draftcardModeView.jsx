@@ -5,6 +5,8 @@ import UserScores from '../../components/UserScores/UserScores.jsx'
 import RadomCardsSelected from '../../components/RadomCardsSelected/RadomCardsSelected.jsx'
 import ConfirmResetDialog from '../../components/ConfirmResetDialog/ConfirmResetDialog.jsx'
 import FinishButton from '../../components/FinishButton/FinishButton.jsx'
+import MatchScoreboard from '../../components/MatchScoreboard/MatchScoreboard.jsx'
+import OnlineRulesOnce from '../../components/OnlineRulesOnce/OnlineRulesOnce.jsx'
 
 function DraftcardModeView() {
   const [showConfirm, setShowConfirm] = useState(false)
@@ -38,16 +40,18 @@ function DraftcardModeView() {
       <HomeButton onClick={handleHomeClick} />
       <h1>Modo MiniUno</h1>
       <p className="infoText">Modo de cartas especiales: cada jugador recibe una carta aleatoria. esta carta solo se puede usar 1 vez por hoyo. en este modo de juego tambien se suman los puntos de los golpes de cada jugador y tambien si sales de la pista se suman 3 puntos.</p>
-      <UserScores title="Hoyo 1" />
-      <RadomCardsSelected />
-      <UserScores title="Hoyo 2" />
-      <RadomCardsSelected />
-      <UserScores title="Hoyo 3" />
-      <RadomCardsSelected />
-      <UserScores title="Hoyo 4" />
-      <RadomCardsSelected />
-      <UserScores title="Hoyo 5" />
-      <RadomCardsSelected />
+      <MatchScoreboard />
+      <OnlineRulesOnce />
+      <UserScores title="Hoyo 1" holeId="1" />
+      <RadomCardsSelected holeId="1" />
+      <UserScores title="Hoyo 2" holeId="2" />
+      <RadomCardsSelected holeId="2" />
+      <UserScores title="Hoyo 3" holeId="3" />
+      <RadomCardsSelected holeId="3" />
+      <UserScores title="Hoyo 4" holeId="4" />
+      <RadomCardsSelected holeId="4" />
+      <UserScores title="Hoyo 5" holeId="5" />
+      <RadomCardsSelected holeId="5" />
 
       <ConfirmResetDialog
         isOpen={showConfirm}

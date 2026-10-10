@@ -1,0 +1,204 @@
+import { useEffect, useState } from 'react'
+import { useAuth } from '../../context/AuthContext.jsx'
+import { AVATARS, ProfileAvatar, resolveAvatarId } from '../../avatars/catalog.jsx'
+import { BEST_FIELDS, MODE_LABELS, MODES } from '../../game/constants.js'
+import { formatGameScore } from '../../game/computeLocalResults.js'
+import { countBetterScores } from '../../services/usersService.js'
+import { listUserGames } from '../../services/gamesService.js'
+import LoadingMask from '../../components/LoadingMask/LoadingMask.jsx'
+import { userFacingError } from '../../utils/userFacingError.js'
+import '../shared/screen.css'
+import './profileView.css'
+
+function ProfileView() {
+  const { profile, user, updateProfile, refreshProfile, logout } = useAuth()
+  const [displayName, setDisplayName] = useState(profile?.displayName || '')
+  const [username, setUsername] = useState(profile?.username || '')
+  const [avatarId, setAvatarId] = useState(() => resolveAvatarId(profile))
+  const [editing, setEditing] = useState(false)
+  const [ranks, setRanks] = useState({})
+  const [games, setGames] = useState([])
+  const [cursor, setCursor] = useState(null)
+  const [error, setError] = useState('')
+  const [info, setInfo] = useState('')
+  const [busy, setBusy] = useState(false)
+
+  useEffect(() => {
+    if (editing) return
+    setDisplayName(profile?.displayName || '')
+    setUsername(profile?.username || '')
+    setAvatarId(resolveAvatarId(profile))
+  }, [profile, editing])
+
+  useEffect(() => {
+    if (!user?.uid) return undefined
+    let cancelled = false
+    const modes = Object.values(MODES)
+    Promise.all(modes.map((mode) => {
+      const score = profile?.[BEST_FIELDS[mode]]
+      if (score == null) return Promise.resolve([mode, null])
+      return countBetterScores(mode, score).then((rank) => [mode, rank]).catch(() => [mode, null])
+    })).then((entries) => {
+      if (!cancelled) setRanks(Object.fromEntries(entries))
+    })
+    listUserGames(user.uid).then((page) => {
+      if (!cancelled) {
+        setGames(page.games)
+        setCursor(page.cursor)
+      }
+    }).catch(() => {})
+    return () => { cancelled = true }
+  }, [user?.uid, profile])
+
+  const startEditing = () => {
+    setError('')
+    setInfo('')
+    setEditing(true)
+  }
+
+  const cancelEditing = () => {
+    setDisplayName(profile?.displayName || '')
+    setUsername(profile?.username || '')
+    setAvatarId(resolveAvatarId(profile))
+    setError('')
+    setInfo('')
+    setEditing(false)
+  }
+
+  const onToggleEdit = () => {
+    if (editing) cancelEditing()
+    else startEditing()
+  }
+
+  const onSave = async (e) => {
+    e.preventDefault()
+    setError('')
+    setInfo('')
+    setBusy(true)
+    try {
+      await updateProfile({ displayName, username, avatarId, photoURL: avatarId })
+      setInfo('Perfil actualizado')
+      await refreshProfile()
+      setEditing(false)
+    } catch (err) {
+      setError(userFacingError(err, 'No se pudo guardar'))
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const loadMore = async () => {
+    if (!cursor || !user?.uid) return
+    const page = await listUserGames(user.uid, { cursor })
+    setGames((prev) => [...prev, ...page.games])
+    setCursor(page.cursor)
+  }
+
+  return (
+    <div className="screen screen--tabs">
+      <h1>Mi perfil</h1>
+      <div className="screenCard screenCard--tabs">
+        <ProfileAvatar avatarId={avatarId} photoURL={avatarId} size={96} className="avatarLg" />
+        <h2 className="profileIconHeading">Icono de perfil</h2>
+        <div className={`avatarChoices${editing ? '' : ' profileAvatarChoicesDisabled'}`}>
+          {AVATARS.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              className={`avatarChoice ${avatarId === item.id ? 'is-selected' : ''}`}
+              onClick={() => setAvatarId(item.id)}
+              disabled={!editing}
+              aria-pressed={avatarId === item.id}
+              aria-label={item.label}
+            >
+              <img src={item.src} alt="" width={64} height={64} />
+            </button>
+          ))}
+        </div>
+
+        <form onSubmit={onSave}>
+          <div className="profileEditBar">
+            <button
+              type="button"
+              className={`profileEditBtn${editing ? ' is-cancel' : ''}`}
+              onClick={onToggleEdit}
+              disabled={busy}
+              aria-label={editing ? 'Cancelar edición' : 'Editar perfil'}
+            >
+              {editing ? (
+                <svg className="profileEditIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg className="profileEditIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M4 20h4l10.5-10.5a1.5 1.5 0 0 0-2.12-2.12L5.88 17.88 4 20z" />
+                  <path d="M14.5 6.5l3 3" />
+                </svg>
+              )}
+            </button>
+          </div>
+
+          <div className="profileFieldBlock">
+            <label>
+              Nombre
+              <input
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                disabled={!editing}
+              />
+            </label>
+            <label>
+              Username
+              <input
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                disabled={!editing}
+              />
+            </label>
+          </div>
+
+          {error ? <p className="errorText">{error}</p> : null}
+          {info ? <p className="muted">{info}</p> : null}
+          {editing ? (
+            <button className="primaryBtn profileBtnFull" type="submit" disabled={busy}>
+              Guardar
+            </button>
+          ) : null}
+        </form>
+        <button className="profileLogoutBtn" type="button" onClick={() => logout()}>
+          Cerrar sesión
+        </button>
+      </div>
+
+      <div className="screenCard screenCard--tabs">
+        {Object.values(MODES).map((mode) => (
+          <div key={mode} className="listRow">
+            <span>{MODE_LABELS[mode]}</span>
+            <span>
+              {ranks[mode] ? `Puesto #${ranks[mode]} · ` : ''}
+              Mejor: {formatGameScore(mode, profile?.[BEST_FIELDS[mode]])}
+            </span>
+          </div>
+        ))}
+        <p className="muted">
+          Partidas: {(profile?.totalGamesClassic || 0) + (profile?.totalGamesRunner || 0) + (profile?.totalGamesMiniuno || 0)}
+        </p>
+      </div>
+
+      <div className="screenCard screenCard--tabs">
+        <h2>Historial</h2>
+        {games.map((g) => (
+          <div key={g.id} className="listRow">
+            <span>{MODE_LABELS[g.mode] || g.mode}</span>
+            <span>{formatGameScore(g.mode, g.score)}</span>
+          </div>
+        ))}
+        {games.length === 0 ? <p className="muted">Aún no hay partidas guardadas.</p> : null}
+        {cursor ? <button className="secondaryBtn" type="button" onClick={loadMore}>Cargar más</button> : null}
+      </div>
+      {busy ? <LoadingMask label="Guardando perfil..." /> : null}
+    </div>
+  )
+}
+
+export default ProfileView

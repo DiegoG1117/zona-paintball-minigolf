@@ -1,14 +1,25 @@
 import { useEffect, useMemo, useState } from 'react'
 import './ResultsTable.css'
+import { useMatch } from '../../context/MatchContext.jsx'
 
 function ResultsTable({ hole = 'Hoyo 1', holes = null, refreshKey = 0 }) {
   const rosterStorageKey = useMemo(() => 'zpminigolf_userScores', [])
   const resultsStorageKey = useMemo(() => 'zpminigolf_runner_results', [])
+  const { isOnlineMatch, players: matchPlayers, scores } = useMatch()
 
   const [players, setPlayers] = useState([])
   const [results, setResults] = useState({})
 
   useEffect(() => {
+    if (isOnlineMatch) {
+      setPlayers(matchPlayers.map((p) => ({ id: p.id, name: p.displayName || p.username })))
+      const mapped = {}
+      matchPlayers.forEach((p) => {
+        mapped[p.id] = scores[p.id]?.holes || {}
+      })
+      setResults(mapped)
+      return
+    }
     try {
       const rawRoster = localStorage.getItem(rosterStorageKey)
       const parsedRoster = rawRoster ? JSON.parse(rawRoster) : []
@@ -16,9 +27,10 @@ function ResultsTable({ hole = 'Hoyo 1', holes = null, refreshKey = 0 }) {
     } catch {
       setPlayers([])
     }
-  }, [rosterStorageKey])
+  }, [rosterStorageKey, isOnlineMatch, matchPlayers, scores])
 
   useEffect(() => {
+    if (isOnlineMatch) return
     try {
       const raw = localStorage.getItem(resultsStorageKey)
       const parsed = raw ? JSON.parse(raw) : {}
@@ -26,7 +38,7 @@ function ResultsTable({ hole = 'Hoyo 1', holes = null, refreshKey = 0 }) {
     } catch {
       setResults({})
     }
-  }, [resultsStorageKey, refreshKey])
+  }, [resultsStorageKey, refreshKey, isOnlineMatch])
 
   const format = (ms) => {
     if (typeof ms !== 'number' || ms < 0) return '--:--'
@@ -71,5 +83,3 @@ function ResultsTable({ hole = 'Hoyo 1', holes = null, refreshKey = 0 }) {
 }
 
 export default ResultsTable
-
-

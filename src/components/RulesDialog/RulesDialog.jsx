@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useKeenSlider } from 'keen-slider/react'
+import { useMatch } from '../../context/MatchContext.jsx'
 import './RulesDialog.css'
 import 'keen-slider/keen-slider.min.css'
 import rule1 from '../../img/Rule1.png'
@@ -8,8 +9,9 @@ import rule2 from '../../img/Rule2.png'
 import rule3 from '../../img/Rule3.png'
 import rule4 from '../../img/Rule4.png'
 
-function RulesDialog({ open, onClose }) {
+function RulesDialog({ open, onClose, variant = 'local' }) {
    const navigate = useNavigate()
+   const { beginLocalPlay } = useMatch()
    const [activeIndex, setActiveIndex] = useState(0)
    const [ref, instanceRef] = useKeenSlider(
       {
@@ -83,7 +85,10 @@ function RulesDialog({ open, onClose }) {
 
    const handleContinue = () => {
       onClose?.()
-      navigate('/newplayers')
+      if (variant === 'local') {
+         beginLocalPlay()
+         navigate('/newplayers')
+      }
    }
 
    return (

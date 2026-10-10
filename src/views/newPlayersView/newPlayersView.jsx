@@ -57,14 +57,16 @@ function NewPlayersView() {
   const resetAll = () => {
     try {
       localStorage.removeItem(storageKey)
-    } catch {}
+    } catch {
+      // ignore
+    }
     setPlayers([])
   }
 
   return (
     <div className="newPlayersView">
       <div className="topbar">
-        <button className="backButton" onClick={() => navigate(-1)} aria-label="Volver">←</button>
+        <button className="backButton" onClick={() => navigate('/')} aria-label="Volver">←</button>
         <h1 className="title">Jugadores</h1>
         <div className="topbarRight">
           <button className="resetButton" title="Reiniciar jugadores" aria-label="Reiniciar jugadores" onClick={resetAll}>

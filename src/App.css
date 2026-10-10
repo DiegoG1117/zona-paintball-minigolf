@@ -5,6 +5,10 @@
   text-align: center;
 }
 
+.appWithBottomNav {
+  padding-bottom: 96px;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;

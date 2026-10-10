@@ -1,13 +1,22 @@
 import { useEffect, useMemo, useState } from 'react'
 import './AddTimeUserScore.css'
+import { useAuth } from '../../context/AuthContext.jsx'
+import { useMatch } from '../../context/MatchContext.jsx'
 
 function AddTimeUserScore({ open, onClose, onConfirm, elapsedMs = 0 }) {
   const rosterStorageKey = useMemo(() => 'zpminigolf_userScores', [])
+  const { user, profile } = useAuth()
+  const { isOnlineMatch } = useMatch()
   const [players, setPlayers] = useState([])
   const [selectedId, setSelectedId] = useState('')
 
   useEffect(() => {
     if (!open) return
+    if (isOnlineMatch && user) {
+      setPlayers([{ id: user.uid, name: profile?.displayName || profile?.username || 'Tú' }])
+      setSelectedId(user.uid)
+      return
+    }
     try {
       const raw = localStorage.getItem(rosterStorageKey)
       const parsed = raw ? JSON.parse(raw) : []
@@ -17,7 +26,7 @@ function AddTimeUserScore({ open, onClose, onConfirm, elapsedMs = 0 }) {
     } catch {
       setPlayers([])
     }
-  }, [open, rosterStorageKey])
+  }, [open, rosterStorageKey, isOnlineMatch, user, profile])
 
   if (!open) return null
 

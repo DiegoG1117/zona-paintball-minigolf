@@ -7,6 +7,11 @@
   min-height: 100dvh;
 }
 
+.gameModesView .errorText {
+  color: #fca5a5;
+  margin: 0;
+}
+
 .topBar {
   display: flex;
   align-items: center;

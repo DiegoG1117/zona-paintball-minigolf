@@ -1,0 +1,72 @@
+.appNav {
+  position: fixed;
+  top: auto;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+  width: max-content;
+  max-width: calc(100vw - 16px);
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transition: background 300ms, box-shadow 300ms, backdrop-filter 300ms;
+}
+
+.appNav.is-scrolled {
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.appNavItem {
+  position: relative;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  text-decoration: none;
+  color: #6E6E73;
+  transition: color 200ms;
+}
+
+.appNavItem.is-active {
+  color: #1D1D1F;
+}
+
+.appNavHighlight {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(10, 132, 255, 0.12);
+  box-shadow: 0 2px 8px rgba(10, 132, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.appNavLabel {
+  color: #fff;
+  position: relative;
+  z-index: 10;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.appWithBottomNav {
+  padding-bottom: 96px;
+}
+
+@media (max-width: 380px) {
+  .appNavItem {
+    padding: 8px 10px;
+  }
+
+  .appNavLabel {
+    font-size: 12px;
+  }
+}

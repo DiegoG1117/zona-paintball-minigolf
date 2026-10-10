@@ -1,13 +1,21 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import './FinishButton.css'
+import { useMatch } from '../../context/MatchContext.jsx'
 
 function FinishButton({ label = 'Finalizar Juego' }) {
   const navigate = useNavigate()
   const location = useLocation()
+  const { isOnlineMatch, isHost, tableResults, match } = useMatch()
   const [isDisabled, setIsDisabled] = useState(true)
 
   useEffect(() => {
+    if (isOnlineMatch) {
+      const hasScore = tableResults.some((row) => Number(row.score) > 0 && Number.isFinite(row.score))
+      setIsDisabled(!hasScore || match?.status !== 'playing')
+      return undefined
+    }
+
     const perHolePrefix = 'zpminigolf_scores_hole_'
     const runnerKey = 'zpminigolf_runner_results'
     const isRunnerMode = typeof location.pathname === 'string' && location.pathname.includes('/gamemodes/runner')
@@ -15,7 +23,7 @@ function FinishButton({ label = 'Finalizar Juego' }) {
     const hasAnyStroke = () => {
       try {
         let totalStrokes = 0
-        for (let i = 0; i < localStorage.length; i++) {
+        for (let i = 0; i < localStorage.length; i += 1) {
           const key = localStorage.key(i)
           if (!key || !key.startsWith(perHolePrefix)) continue
           const parsed = JSON.parse(localStorage.getItem(key) || '{}') || {}
@@ -51,28 +59,36 @@ function FinishButton({ label = 'Finalizar Juego' }) {
     recompute()
     const id = setInterval(recompute, 800)
     return () => clearInterval(id)
-  }, [location.pathname])
+  }, [location.pathname, isOnlineMatch, tableResults, match?.status])
 
   const handleClick = () => {
     if (isDisabled) return
     navigate('/results', {
       state: {
         returnTo: location.pathname,
+        fromMatch: isOnlineMatch,
       },
     })
+  }
+
+  if (isOnlineMatch && !isHost) {
+    return (
+      <div className="finishButtonWrapper">
+        <button className="finishButton" disabled aria-disabled="true">
+          Esperando al anfitrión
+        </button>
+      </div>
+    )
   }
 
   return (
     <div className="finishButtonWrapper">
       <button className="finishButton" onClick={handleClick} disabled={isDisabled} aria-disabled={isDisabled}>
         <span className="flagIcon" aria-hidden>🏁</span>
-        {label}
+        {isOnlineMatch ? 'Ver resultado y finalizar' : label}
       </button>
     </div>
   )
 }
 
 export default FinishButton
-
-
-

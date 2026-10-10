@@ -1,0 +1,19 @@
+.playViewError {
+  text-align: center;
+}
+
+.playCard h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.playCard p {
+  margin: 0;
+  line-height: 1.45;
+  opacity: 0.88;
+}
+
+.playCard .primaryBtn,
+.playCard .secondaryBtn {
+  width: 100%;
+}

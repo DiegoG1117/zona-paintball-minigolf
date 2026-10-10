@@ -1,0 +1,40 @@
+.matchBoard {
+  position: relative;
+  z-index: 1;
+  align-self: stretch;
+  width: auto;
+  box-sizing: border-box;
+  margin: 0 24px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 18px;
+  text-align: left;
+}
+
+.matchBoard h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+.matchBoardRow {
+  display: grid;
+  grid-template-columns: 28px 32px 1fr auto;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 0;
+}
+
+.matchBoardAvatar {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.matchBoardName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

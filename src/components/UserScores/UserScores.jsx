@@ -1,26 +1,33 @@
 import { useEffect, useMemo, useState } from 'react'
 import './UserScores.css'
+import { useAuth } from '../../context/AuthContext.jsx'
+import { useMatch } from '../../context/MatchContext.jsx'
 
 function UserScores({ title = 'Marcador', holeId = 'global' }) {
-  // Roster of players is shared across app
   const rosterStorageKey = 'zpminigolf_userScores'
-  // Per-hole strokes are stored under a hole-specific key
   const perHoleStorageKey = useMemo(() => `zpminigolf_scores_hole_${holeId}`, [holeId])
+  const { user } = useAuth()
+  const { isOnlineMatch, players: matchPlayers, scores, writeMyHoleScore } = useMatch()
 
   const [players, setPlayers] = useState([])
-  // UI for adding/resetting players moved to NewPlayersView
 
-  // Load roster and hole strokes from localStorage
   useEffect(() => {
+    if (isOnlineMatch) {
+      const merged = matchPlayers.map((p) => ({
+        id: p.id,
+        name: p.displayName || p.username || 'Jugador',
+        strokes: Math.max(0, Number(scores[p.id]?.holes?.[holeId] ?? 0)),
+      }))
+      setPlayers(merged)
+      return
+    }
     try {
-      // Load roster
       const rawRoster = localStorage.getItem(rosterStorageKey)
       const parsedRoster = rawRoster ? JSON.parse(rawRoster) : []
       const basePlayers = Array.isArray(parsedRoster)
         ? parsedRoster.map((p) => ({ id: p.id ?? crypto.randomUUID(), name: p.name ?? '', strokes: 0 }))
         : []
 
-      // Load per-hole strokes (object map id -> strokes, or legacy array)
       const rawHole = localStorage.getItem(perHoleStorageKey)
       let strokesById = {}
       if (rawHole) {
@@ -35,19 +42,17 @@ function UserScores({ title = 'Marcador', holeId = 'global' }) {
         }
       }
 
-      const merged = basePlayers.map((bp) => ({
+      setPlayers(basePlayers.map((bp) => ({
         ...bp,
         strokes: Math.max(0, Number(strokesById[bp.id] ?? 0)),
-      }))
-      setPlayers(merged)
+      })))
     } catch {
-      // ignore parse errors and start fresh
       setPlayers([])
     }
-  }, [perHoleStorageKey])
+  }, [isOnlineMatch, matchPlayers, scores, holeId, perHoleStorageKey])
 
-  // Persist only per-hole strokes whenever they change
   useEffect(() => {
+    if (isOnlineMatch) return undefined
     try {
       const strokesMap = players.reduce((acc, p) => {
         acc[p.id] = p.strokes
@@ -57,25 +62,24 @@ function UserScores({ title = 'Marcador', holeId = 'global' }) {
     } catch {
       // ignore write errors (e.g., quota)
     }
-  }, [players, perHoleStorageKey])
+    return undefined
+  }, [players, perHoleStorageKey, isOnlineMatch])
 
-  
+  const setStrokes = (id, nextValue) => {
+    const strokes = Math.max(0, nextValue)
+    setPlayers((prev) => prev.map((p) => (p.id === id ? { ...p, strokes } : p)))
+    if (isOnlineMatch) writeMyHoleScore(holeId, strokes)
+  }
 
   const increment = (id) => {
-    setPlayers((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, strokes: p.strokes + 1 } : p))
-    )
+    const current = players.find((p) => p.id === id)
+    setStrokes(id, (current?.strokes || 0) + 1)
   }
 
   const decrement = (id) => {
-    setPlayers((prev) =>
-      prev.map((p) =>
-        p.id === id ? { ...p, strokes: Math.max(0, p.strokes - 1) } : p
-      )
-    )
+    const current = players.find((p) => p.id === id)
+    setStrokes(id, Math.max(0, (current?.strokes || 0) - 1))
   }
-
-  
 
   return (
     <div className="userScores">
@@ -87,41 +91,41 @@ function UserScores({ title = 'Marcador', holeId = 'global' }) {
       </div>
 
       <div className="userScoresList">
-        {players.map((player) => (
-          <div key={player.id} className="userScoresRow">
-            <div className="userScoresName">{player.name}</div>
-            <div className="userScoresControls">
-              <button
-                className="scoreBtn"
-                aria-label="Restar golpe"
-                onClick={() => decrement(player.id)}
-                disabled={player.strokes === 0}
-              >
-                −
-              </button>
-              <input
-                className="scoreInput"
-                type="number"
-                value={player.strokes}
-                readOnly
-              />
-              <button
-                className="scoreBtn"
-                aria-label="Sumar golpe"
-                onClick={() => increment(player.id)}
-              >
-                +
-              </button>
+        {players.map((player) => {
+          const canEdit = !isOnlineMatch || player.id === user?.uid
+          return (
+            <div key={player.id} className="userScoresRow">
+              <div className="userScoresName">{player.name}</div>
+              <div className="userScoresControls">
+                <button
+                  className="scoreBtn"
+                  aria-label="Restar golpe"
+                  onClick={() => decrement(player.id)}
+                  disabled={!canEdit || player.strokes === 0}
+                >
+                  −
+                </button>
+                <input
+                  className="scoreInput"
+                  type="number"
+                  value={player.strokes}
+                  readOnly
+                />
+                <button
+                  className="scoreBtn"
+                  aria-label="Sumar golpe"
+                  onClick={() => increment(player.id)}
+                  disabled={!canEdit}
+                >
+                  +
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
-
-      
     </div>
   )
 }
 
 export default UserScores
-
-

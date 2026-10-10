@@ -4,6 +4,8 @@ import UserScores from '../../components/UserScores/UserScores.jsx'
 import HomeButton from '../../components/HomeButton/HomeButton.jsx'
 import ConfirmResetDialog from '../../components/ConfirmResetDialog/ConfirmResetDialog.jsx'
 import FinishButton from '../../components/FinishButton/FinishButton.jsx'
+import MatchScoreboard from '../../components/MatchScoreboard/MatchScoreboard.jsx'
+import OnlineRulesOnce from '../../components/OnlineRulesOnce/OnlineRulesOnce.jsx'
 
 function ClassicModeView() {
   const [showConfirm, setShowConfirm] = useState(false)
@@ -36,6 +38,8 @@ function ClassicModeView() {
       <h1>Modo clásico</h1>
       <p className="infoText">Gana quien tenga menos puntos al final. Cada
       golpe cuenta como un punto. Recuerda sumar +3 si sales de la pista.</p>
+      <MatchScoreboard />
+      <OnlineRulesOnce />
       <UserScores title="Hoyo 1" holeId="1" />
       <UserScores title="Hoyo 2" holeId="2" />
       <UserScores title="Hoyo 3" holeId="3" />

@@ -1,32 +1,43 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import './runnerModeView.css'
 import HomeButton from '../../components/HomeButton/HomeButton.jsx'
-import UserScores from '../../components/UserScores/UserScores.jsx'
 import ScoreTimer from '../../components/ScoreTimer/ScoreTimer.jsx'
 import ResultsTable from '../../components/ResultsTable/ResultsTable.jsx'
 import ConfirmResetDialog from '../../components/ConfirmResetDialog/ConfirmResetDialog.jsx'
 import FinishButton from '../../components/FinishButton/FinishButton.jsx'
+import MatchScoreboard from '../../components/MatchScoreboard/MatchScoreboard.jsx'
+import OnlineRulesOnce from '../../components/OnlineRulesOnce/OnlineRulesOnce.jsx'
+import { useAuth } from '../../context/AuthContext.jsx'
+import { useMatch } from '../../context/MatchContext.jsx'
 
 function RunnerModeView() {
   const resultsStorageKey = useMemo(() => 'zpminigolf_runner_results', [])
   const [refreshKey, setRefreshKey] = useState(0)
   const [showConfirm, setShowConfirm] = useState(false)
   const navigateRef = useRef(null)
+  const { user } = useAuth()
+  const { isOnlineMatch, writeMyHoleScore } = useMatch()
 
   const saveResult = useCallback(({ playerId, elapsedMs }, holeLabel) => {
+    if (isOnlineMatch && user?.uid) {
+      writeMyHoleScore(holeLabel, elapsedMs)
+      setRefreshKey((k) => k + 1)
+      return
+    }
     try {
       const raw = localStorage.getItem(resultsStorageKey)
       const parsed = raw ? JSON.parse(raw) : {}
       const next = { ...(parsed && typeof parsed === 'object' ? parsed : {}) }
-      const userMap = { ...(next[playerId] || {}) }
+      const uid = playerId
+      const userMap = { ...(next[uid] || {}) }
       userMap[holeLabel] = elapsedMs
-      next[playerId] = userMap
+      next[uid] = userMap
       localStorage.setItem(resultsStorageKey, JSON.stringify(next))
       setRefreshKey((k) => k + 1)
     } catch {
       // ignore
     }
-  }, [resultsStorageKey])
+  }, [resultsStorageKey, isOnlineMatch, user?.uid, writeMyHoleScore])
 
   const handleHomeClick = ({ navigate }) => {
     navigateRef.current = navigate
@@ -51,6 +62,8 @@ function RunnerModeView() {
       <h1>Runner Mode</h1>
       <p className="infoText">Completa los hoyos antes de que se acabe el tiempo. Un jugador controla el
       cronómetro: inicia al empezar y detiene al terminar. Al finalizar cada hoyo, pulsa el botón rojo y registra el tiempo seleccionando al jugador en la lista.</p>
+      <MatchScoreboard />
+      <OnlineRulesOnce />
       <ScoreTimer title="Hoyo 1" setTimer={{ minutes: 0, seconds: 30 }} onSaved={(data) => saveResult(data, 'Hoyo 1')} />
       <ScoreTimer title="Hoyo 2" setTimer={{ minutes: 1, seconds: 30 }} onSaved={(data) => saveResult(data, 'Hoyo 2')} />
       <ScoreTimer title="Hoyo 3" setTimer={{ minutes: 0, seconds: 50}} onSaved={(data) => saveResult(data, 'Hoyo 3')} />

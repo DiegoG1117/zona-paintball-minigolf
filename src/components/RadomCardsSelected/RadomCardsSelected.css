@@ -29,10 +29,9 @@
 .drawButtonLabel { line-height: 1; }
 
 .playerButtons {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  display: flex;
+  justify-content: center;
   gap: 12px;
-  width: 100%;
 }
 
 .playerButton {

@@ -1,10 +1,17 @@
 import { useEffect, useMemo, useState } from 'react'
 import './RadomCardsSelected.css'
 import UserRandomCard from '../UserRandomCard/UserRandomCard.jsx'
+import { useAuth } from '../../context/AuthContext.jsx'
+import { useMatch } from '../../context/MatchContext.jsx'
 
 function RadomCardsSelected({ holeId = 'global' }) {
   const rosterStorageKey = useMemo(() => 'zpminigolf_userScores', [])
-  const assignmentsStorageKey = useMemo(() => `zpminigolf_draftcard_assignments_${holeId}`, [holeId])
+  const { user } = useAuth()
+  const { isOnlineMatch, matchId, players: matchPlayers } = useMatch()
+  const assignmentsStorageKey = useMemo(() => {
+    if (isOnlineMatch && matchId) return `zpminigolf_draftcard_${matchId}_${holeId}`
+    return `zpminigolf_draftcard_assignments_${holeId}`
+  }, [holeId, isOnlineMatch, matchId])
 
   const [players, setPlayers] = useState([])
   const [hasDrawn, setHasDrawn] = useState(false)
@@ -23,6 +30,11 @@ function RadomCardsSelected({ holeId = 'global' }) {
   )
 
   useEffect(() => {
+    if (isOnlineMatch) {
+      const me = matchPlayers.find((p) => p.id === user?.uid)
+      setPlayers(me ? [{ id: me.id, name: me.displayName || me.username }] : [])
+      return
+    }
     try {
       const rawRoster = localStorage.getItem(rosterStorageKey)
       const parsedRoster = rawRoster ? JSON.parse(rawRoster) : []
@@ -32,7 +44,7 @@ function RadomCardsSelected({ holeId = 'global' }) {
     } catch {
       setPlayers([])
     }
-  }, [rosterStorageKey])
+  }, [rosterStorageKey, isOnlineMatch, matchPlayers, user?.uid])
 
   useEffect(() => {
     try {
