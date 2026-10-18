@@ -149,13 +149,12 @@ function ProfileView() {
               aria-label={editing ? 'Cancelar edición' : 'Editar perfil'}
             >
               {editing ? (
-                <svg className="profileEditIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
+                <svg className="profileEditIcon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
                   <path d="M18 6L6 18M6 6l12 12" />
                 </svg>
               ) : (
-                <svg className="profileEditIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M4 20h4l10.5-10.5a1.5 1.5 0 0 0-2.12-2.12L5.88 17.88 4 20z" />
-                  <path d="M14.5 6.5l3 3" />
+                <svg className="profileEditIcon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zm2.92 2.25H5v-.92l9.06-9.06.92.92L5.92 19.5zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
                 </svg>
               )}
             </button>

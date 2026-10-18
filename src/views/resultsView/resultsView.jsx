@@ -131,7 +131,7 @@ function ResultsView() {
 
       <div className="actions">
         {showHostFinish ? (
-          <button className="replayButton" onClick={handleHostFinish} disabled={saveStatus === 'saving'}>
+          <button className="finishMatchButton" type="button" onClick={handleHostFinish} disabled={saveStatus === 'saving'}>
             {saveStatus === 'saving' ? 'Guardando...' : 'Finalizar partida'}
           </button>
         ) : null}
