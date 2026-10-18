@@ -10,6 +10,20 @@ import { userFacingError } from '../../utils/userFacingError.js'
 import '../shared/screen.css'
 import './profileView.css'
 
+const playedDateFormat = new Intl.DateTimeFormat('es', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+})
+
+function formatPlayedOn(value) {
+  let date = null
+  if (value && typeof value.toDate === 'function') date = value.toDate()
+  else if (value && typeof value.seconds === 'number') date = new Date(value.seconds * 1000)
+  if (!date || Number.isNaN(date.getTime())) return ''
+  return playedDateFormat.format(date)
+}
+
 function ProfileView() {
   const { profile, user, updateProfile, refreshProfile, logout } = useAuth()
   const [displayName, setDisplayName] = useState(profile?.displayName || '')
@@ -19,6 +33,7 @@ function ProfileView() {
   const [ranks, setRanks] = useState({})
   const [games, setGames] = useState([])
   const [cursor, setCursor] = useState(null)
+  const [historyError, setHistoryError] = useState('')
   const [error, setError] = useState('')
   const [info, setInfo] = useState('')
   const [busy, setBusy] = useState(false)
@@ -45,8 +60,11 @@ function ProfileView() {
       if (!cancelled) {
         setGames(page.games)
         setCursor(page.cursor)
+        setHistoryError('')
       }
-    }).catch(() => {})
+    }).catch((err) => {
+      if (!cancelled) setHistoryError(userFacingError(err, 'No se pudo cargar el historial'))
+    })
     return () => { cancelled = true }
   }, [user?.uid, profile])
 
@@ -88,10 +106,15 @@ function ProfileView() {
   }
 
   const loadMore = async () => {
-    if (!cursor || !user?.uid) return
-    const page = await listUserGames(user.uid, { cursor })
-    setGames((prev) => [...prev, ...page.games])
-    setCursor(page.cursor)
+    if (cursor == null || !user?.uid) return
+    try {
+      const page = await listUserGames(user.uid, { cursor })
+      setGames((prev) => [...prev, ...page.games])
+      setCursor(page.cursor)
+      setHistoryError('')
+    } catch (err) {
+      setHistoryError(userFacingError(err, 'No se pudo cargar el historial'))
+    }
   }
 
   return (
@@ -187,13 +210,20 @@ function ProfileView() {
 
       <div className="screenCard screenCard--tabs">
         <h2>Historial</h2>
-        {games.map((g) => (
-          <div key={g.id} className="listRow">
-            <span>{MODE_LABELS[g.mode] || g.mode}</span>
-            <span>{formatGameScore(g.mode, g.score)}</span>
-          </div>
-        ))}
-        {games.length === 0 ? <p className="muted">Aún no hay partidas guardadas.</p> : null}
+        {games.map((g) => {
+          const playedOn = formatPlayedOn(g.createdAt)
+          return (
+            <div key={g.id} className="listRow">
+              <span className="historyGame">
+                <span>{MODE_LABELS[g.mode] || g.mode}</span>
+                {playedOn ? <span className="historyDate">{playedOn}</span> : null}
+              </span>
+              <span>{formatGameScore(g.mode, g.score)}</span>
+            </div>
+          )
+        })}
+        {historyError ? <p className="errorText">{historyError}</p> : null}
+        {!historyError && games.length === 0 ? <p className="muted">Aún no hay partidas guardadas.</p> : null}
         {cursor ? <button className="secondaryBtn" type="button" onClick={loadMore}>Cargar más</button> : null}
       </div>
       {busy ? <LoadingMask label="Guardando perfil..." /> : null}
