@@ -40,7 +40,7 @@ export const TOTAL_FIELDS = {
 }
 
 export const JOIN_CODE_LENGTH = 6
-export const RANKING_LIMIT = 100
+export const RANKING_PAGE_SIZE = 20
 export const HISTORY_PAGE_SIZE = 20
 export const SCORE_WRITE_DEBOUNCE_MS = 1500
 export const SCORE_POLL_MS = 9000

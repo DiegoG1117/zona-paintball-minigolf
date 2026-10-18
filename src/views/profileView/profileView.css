@@ -68,12 +68,6 @@
   opacity: 0.92;
 }
 
-.profileIconHeading {
-  margin: 4px 0 0;
-  font-size: 14px;
-  font-weight: 700;
-}
-
 .profileAvatarChoicesDisabled {
   pointer-events: none;
   opacity: 0.72;

@@ -76,7 +76,7 @@ function PlayView() {
       </form>
 
       <section className="screenCard screenCard--tabs playCard">
-        <h2>Jugar local</h2>
+        <h2>Jugar sin Internet</h2>
         <p>
           Esta partida se queda solo en este teléfono. No se guarda en el ranking y no se puede jugar
           entre varios móviles.
@@ -90,7 +90,7 @@ function PlayView() {
           }}
           disabled={Boolean(busy)}
         >
-          Jugar local
+          Jugar sin Internet
         </button>
       </section>
 
