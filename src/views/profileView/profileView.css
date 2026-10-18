@@ -72,3 +72,15 @@
   pointer-events: none;
   opacity: 0.72;
 }
+
+.historyGame {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.historyDate {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}

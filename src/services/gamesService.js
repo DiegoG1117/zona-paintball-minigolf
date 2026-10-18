@@ -3,11 +3,8 @@ import {
   doc,
   getDoc,
   getDocs,
-  limit,
-  orderBy,
   query,
   serverTimestamp,
-  startAfter,
   where,
   writeBatch,
 } from 'firebase/firestore'
@@ -61,17 +58,24 @@ export async function saveMyFinishedGame({ match, uid, profile, score }) {
   return { record, gameId: gameRef.id, score: numericScore }
 }
 
-export async function listUserGames(uid, { pageSize = HISTORY_PAGE_SIZE, cursor = null } = {}) {
+function createdAtMillis(value) {
+  if (!value) return 0
+  if (typeof value.toMillis === 'function') return value.toMillis()
+  if (typeof value.seconds === 'number') return value.seconds * 1000
+  return 0
+}
+
+export async function listUserGames(uid, { pageSize = HISTORY_PAGE_SIZE, cursor = 0 } = {}) {
   const db = getDb()
   if (!db || !uid) return { games: [], cursor: null }
-  const constraints = [
-    where('userId', '==', uid),
-    orderBy('createdAt', 'desc'),
-    limit(pageSize),
-  ]
-  if (cursor) constraints.push(startAfter(cursor))
-  const snap = await getDocs(query(collection(db, 'games'), ...constraints))
-  const games = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
-  const nextCursor = snap.docs.length === pageSize ? snap.docs[snap.docs.length - 1] : null
-  return { games, cursor: nextCursor }
+  // Equality on userId uses the automatic index. orderBy(createdAt) needs a
+  // composite index that is not deployed, so the history query was failing.
+  const snap = await getDocs(query(collection(db, 'games'), where('userId', '==', uid)))
+  const games = snap.docs
+    .map((d) => ({ id: d.id, ...d.data() }))
+    .sort((a, b) => createdAtMillis(b.createdAt) - createdAtMillis(a.createdAt))
+  const offset = Number(cursor) || 0
+  const page = games.slice(offset, offset + pageSize)
+  const next = offset + pageSize
+  return { games: page, cursor: next < games.length ? next : null }
 }
