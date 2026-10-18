@@ -20,7 +20,7 @@ function MainView() {
             Iniciar sesión
           </button>
           <button className="startButton startButton--local" type="button" onClick={() => setRulesOpen(true)}>
-            Jugar local
+            Jugar sin Internet
           </button>
         </div>
       ) : null}

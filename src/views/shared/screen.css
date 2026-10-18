@@ -51,7 +51,8 @@
 }
 
 .screenCard input,
-.screenCard select {
+.screenCard select,
+.screenCard .passwordField input {
   height: 42px;
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -119,6 +120,12 @@
   align-items: center;
   justify-content: center;
   background: rgba(255,255,255,0.15);
+}
+
+.profileIconHeading {
+  margin: 4px 0 0;
+  font-size: 14px;
+  font-weight: 700;
 }
 
 .avatarChoices {
@@ -206,12 +213,62 @@
   min-width: 0;
 }
 
+.rankTableHead,
 .rankRow {
   display: grid;
-  grid-template-columns: 36px 36px 1fr auto;
-  gap: 10px;
+  grid-template-columns: 76px minmax(0, 1.3fr) minmax(0, 1fr) auto;
+  gap: 8px;
   align-items: center;
+}
+
+.rankTableHead {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  opacity: 0.75;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.rankTableHead span {
+  min-width: 0;
+}
+
+.rankTableHead span:last-child,
+.rankScoreCell {
+  text-align: right;
+}
+
+.rankRow {
   padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.rankPos {
+  font-variant-numeric: tabular-nums;
+}
+
+.rankNameCell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.rankNameCell > span,
+.rankUserCell {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rankSentinel {
+  height: 1px;
+}
+
+.rankMore {
+  text-align: center;
+  padding-top: 8px;
 }
 
 

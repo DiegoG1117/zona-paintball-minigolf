@@ -62,13 +62,14 @@ export async function linkUsernameEmail(uid, usernameLower, email) {
   await updateDoc(ref, { email: safeEmail })
 }
 
-export async function createUserProfile({ uid, username, displayName, email }) {
+export async function createUserProfile({ uid, username, displayName, email, avatarId }) {
   const db = getDb()
   if (!db) throw new Error('Firebase no está configurado')
   const safeUsername = validateUsername(username)
   const usernameLower = normalizeUsername(safeUsername)
   const visibleName = (displayName || safeUsername).trim()
   const safeEmail = normalizeEmail(email)
+  const safeAvatarId = isAvatarId(avatarId) ? avatarId : DEFAULT_AVATAR_ID
 
   await runTransaction(db, async (tx) => {
     const unameRef = doc(db, 'usernames', usernameLower)
@@ -79,9 +80,10 @@ export async function createUserProfile({ uid, username, displayName, email }) {
       username: safeUsername,
       usernameLower,
       displayName: visibleName,
-      photoURL: DEFAULT_AVATAR_ID,
-      avatarId: DEFAULT_AVATAR_ID,
+      photoURL: safeAvatarId,
+      avatarId: safeAvatarId,
       createdAt: serverTimestamp(),
+      dataConsentAt: serverTimestamp(),
       totalGamesClassic: 0,
       totalGamesRunner: 0,
       totalGamesMiniuno: 0,

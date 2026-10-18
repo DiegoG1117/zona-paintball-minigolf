@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext.jsx'
 import GuestHomeLink from '../../components/GuestHomeLink/GuestHomeLink.jsx'
 import LoadingMask from '../../components/LoadingMask/LoadingMask.jsx'
+import PasswordField from '../../components/PasswordField/PasswordField.jsx'
 import { userFacingError } from '../../utils/userFacingError.js'
 import '../shared/screen.css'
 
@@ -62,12 +63,18 @@ function LoginView() {
             onChange={(e) => setIdentifier(e.target.value)}
             required
             autoComplete="username"
-            placeholder="correo@email.com o diego_golf"
+            placeholder="ejemplo@correo.com o usuario3214"
           />
         </label>
         <label>
           Contraseña
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required autoComplete="current-password" />
+          <PasswordField
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            autoComplete="current-password"
+            placeholder="**********"
+          />
         </label>
         {error ? <p className="errorText">{error}</p> : null}
         {info ? <p className="muted">{info}</p> : null}

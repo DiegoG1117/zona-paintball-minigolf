@@ -48,9 +48,12 @@ export function AuthProvider({ children }) {
       }
       try {
         const nextProfile = await getUserProfile(nextUser.uid)
-        setProfile(nextProfile)
+        setProfile((current) => {
+          if (!nextProfile && current?.id === nextUser.uid) return current
+          return nextProfile
+        })
       } catch {
-        setProfile(null)
+        setProfile((current) => (current?.id === nextUser.uid ? current : null))
       } finally {
         setLoading(false)
       }
@@ -82,7 +85,7 @@ export function AuthProvider({ children }) {
     return () => unsub()
   }, [user?.uid])
 
-  const register = useCallback(async ({ email, password, username, displayName }) => {
+  const register = useCallback(async ({ email, password, username, displayName, avatarId }) => {
     const cred = await registerWithEmail(email, password)
     try {
       const next = await createUserProfile({
@@ -90,7 +93,9 @@ export function AuthProvider({ children }) {
         username,
         displayName,
         email,
+        avatarId,
       })
+      setUser(cred.user)
       setProfile(next)
       return cred.user
     } catch (err) {
