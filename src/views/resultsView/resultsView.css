@@ -75,5 +75,28 @@
 .actions { position: fixed; left: 0; right: 0; bottom: 0; display:flex; justify-content: center; padding: 16px; background: linear-gradient(0deg, rgba(16,0,36,0.95) 0%, rgba(16,0,36,0.4) 70%, rgba(16,0,36,0) 100%); }
 .replayButton { background: #fff; color: #2a0d53; border: none; padding: 12px 20px; border-radius: 12px; font-weight: 700; font-size: 16px; }
 
+.finishMatchButton {
+  background: linear-gradient(90deg, #dc2626, #b91c1c);
+  color: #fff;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.finishMatchButton:hover,
+.finishMatchButton:disabled {
+  border-color: transparent;
+  background: linear-gradient(90deg, #dc2626, #b91c1c);
+  color: #fff;
+}
+
+.finishMatchButton:disabled {
+  opacity: 0.85;
+  cursor: wait;
+}
+
 
 
