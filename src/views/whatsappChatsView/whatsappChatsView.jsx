@@ -1,5 +1,4 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
 import {
   listenWhatsappChats,
   listenWhatsappMessages,
@@ -70,8 +69,6 @@ function useWideScreen() {
 }
 
 function WhatsappChatsView() {
-  const [params] = useSearchParams()
-  const clave = params.get('clave') || ''
   const wide = useWideScreen()
   const [phase, setPhase] = useState('loading')
   const [db, setDb] = useState(null)
@@ -83,26 +80,15 @@ function WhatsappChatsView() {
   const scrollerRef = useRef(null)
 
   useEffect(() => {
-    if (!clave) {
-      setPhase('denied')
+    const nextDb = openWhatsappInbox()
+    if (!nextDb) {
+      setPhase('error')
       return undefined
     }
-    let cancelled = false
-    setPhase('loading')
-    openWhatsappInbox(clave)
-      .then((nextDb) => {
-        if (cancelled) return
-        setDb(nextDb)
-        setPhase('ready')
-      })
-      .catch((error) => {
-        if (cancelled) return
-        setPhase(error?.code === 'clave' ? 'denied' : 'error')
-      })
-    return () => {
-      cancelled = true
-    }
-  }, [clave])
+    setDb(nextDb)
+    setPhase('ready')
+    return undefined
+  }, [])
 
   useEffect(() => {
     if (!db) return undefined
@@ -160,14 +146,6 @@ function WhatsappChatsView() {
     return (
       <div className="waGate">
         <p>Cargando conversaciones…</p>
-      </div>
-    )
-  }
-
-  if (phase === 'denied') {
-    return (
-      <div className="waGate">
-        <p>Este enlace no es válido.</p>
       </div>
     )
   }

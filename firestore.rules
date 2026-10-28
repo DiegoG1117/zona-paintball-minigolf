@@ -13,8 +13,25 @@ service cloud.firestore {
       return signedIn() && request.auth.uid in matchDoc(matchId).playerIds;
     }
 
-    function isWhatsappInbox() {
-      return signedIn() && request.auth.token.inbox == true;
+    function validWhatsappSession() {
+      return request.resource.data.phone is string
+        && request.resource.data.phone.size() >= 8
+        && request.resource.data.phone.size() <= 15
+        && request.resource.data.lastText is string
+        && request.resource.data.lastText.size() > 0
+        && request.resource.data.lastText.size() <= 8000
+        && request.resource.data.lastDirection in ['in', 'out']
+        && request.resource.data.lastAt is timestamp;
+    }
+
+    function validWhatsappMessage() {
+      return request.resource.data.direction in ['in', 'out']
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 8000
+        && request.resource.data.senderName is string
+        && request.resource.data.kind in ['text', 'image']
+        && request.resource.data.at is timestamp;
     }
 
     match /users/{userId} {
@@ -92,12 +109,14 @@ service cloud.firestore {
     }
 
     match /whatsappChats/{phone} {
-      allow read: if isWhatsappInbox();
-      allow write: if false;
+      allow read: if true;
+      allow create, update: if validWhatsappSession();
+      allow delete: if false;
 
       match /messages/{messageId} {
-        allow read: if isWhatsappInbox();
-        allow write: if false;
+        allow read: if true;
+        allow create, update: if validWhatsappMessage();
+        allow delete: if false;
       }
     }
   }
