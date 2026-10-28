@@ -13,6 +13,7 @@ import RankingView from './views/rankingView/rankingView.jsx'
 import ProfileView from './views/profileView/profileView.jsx'
 import PlayView from './views/playView/playView.jsx'
 import MatchLobbyView from './views/matchLobbyView/matchLobbyView.jsx'
+import WhatsappChatsView from './views/whatsappChatsView/whatsappChatsView.jsx'
 import RequireAuth from './components/RequireAuth/RequireAuth.jsx'
 import AppNav from './components/AppNav/AppNav.jsx'
 import { useAuth } from './context/AuthContext.jsx'
@@ -24,6 +25,7 @@ const HIDDEN_NAV_PATHS = new Set([
   '/gamemodes/draftcard',
   '/results',
   '/newplayers',
+  '/zpminigolf/chatswhatsapp',
 ])
 
 function App() {
@@ -49,6 +51,7 @@ function App() {
         <Route path="/gamemodes/runner" element={<RunnerModeView />} />
         <Route path="/gamemodes/draftcard" element={<DraftcardModeView />} />
         <Route path="/results" element={<ResultsView />} />
+        <Route path="/zpminigolf/chatswhatsapp" element={<WhatsappChatsView />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <AppNav />
