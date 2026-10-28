@@ -24,15 +24,35 @@ function formatWhen(value) {
   return `${date.getDate()} ${MONTHS[date.getMonth()]}, ${hours}:${minutes}`
 }
 
+function phoneDigits(phone) {
+  return String(phone || '').replace(/\D/g, '')
+}
+
 function formatPhone(phone) {
-  const digits = String(phone || '').replace(/\D/g, '')
+  const digits = phoneDigits(phone)
   if (!digits) return ''
   return `+${digits}`
+}
+
+function whatsappLink(phone) {
+  const digits = phoneDigits(phone)
+  return digits ? `https://wa.me/${digits}` : ''
 }
 
 function initialOf(name) {
   const match = String(name || '').match(/\p{L}|\p{N}/u)
   return (match?.[0] || '?').toUpperCase()
+}
+
+function imageUrlFromMessage(message) {
+  const text = String(message.text || '').trim()
+  const match = text.match(/https?:\/\/[^\s]+/)
+  if (!match) return ''
+  const url = match[0].replace(/[),.;]+$/, '')
+  const looksLikePhoto = message.kind === 'image'
+    || /^foto:/i.test(text)
+    || /\.(jpe?g|png|webp|gif)(?:[?#].*)?$/i.test(url)
+  return looksLikePhoto ? url : ''
 }
 
 function linkify(text) {
@@ -202,18 +222,37 @@ function WhatsappChatsView() {
                 ‹
               </button>
               <span className="waAvatar" aria-hidden="true">{initialOf(selected.name || selected.id)}</span>
-              <div>
+              <div className="waThreadIdentity">
                 <span className="waName">{selected.name || formatPhone(selected.id)}</span>
                 <span className="waPhone">{formatPhone(selected.phone || selected.id)}</span>
               </div>
+              <a
+                className="waOpenChat"
+                href={whatsappLink(selected.phone || selected.id)}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Ir al chat
+              </a>
             </header>
             <div className="waMessages" ref={scrollerRef} onScroll={onMessagesScroll}>
               {messages.map((message) => {
                 const outgoing = message.direction === 'out'
+                const photo = imageUrlFromMessage(message)
+                const caption = photo
+                  ? String(message.text || '').replace(photo, '').replace(/^foto:\s*/i, '').trim()
+                  : ''
                 return (
                   <article key={message.id} className={outgoing ? 'waMsg waMsgOut' : 'waMsg waMsgIn'}>
                     <div className={outgoing ? 'waBubble waBubbleOut' : 'waBubble waBubbleIn'}>
-                      {linkify(message.text)}
+                      {photo ? (
+                        <>
+                          <a href={photo} target="_blank" rel="noopener noreferrer">
+                            <img className="waPhoto" src={photo} alt="Foto enviada" />
+                          </a>
+                          {caption ? <div className="waPhotoCaption">{linkify(caption)}</div> : null}
+                        </>
+                      ) : linkify(message.text)}
                     </div>
                     <div className="waMeta">
                       {formatWhen(message.at)}

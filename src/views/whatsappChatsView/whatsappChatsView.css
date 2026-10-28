@@ -146,6 +146,30 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
+.waThreadIdentity {
+  min-width: 0;
+  flex: 1;
+}
+
+.waOpenChat {
+  margin-left: auto;
+  flex: 0 0 auto;
+  background: #1f8a4c;
+  color: #fff;
+  text-decoration: none;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  border-radius: 999px;
+  padding: 10px 12px;
+}
+
+.waInbox a.waOpenChat:hover {
+  color: #fff;
+}
+
 .waBack {
   width: 36px;
   height: 36px;
@@ -196,6 +220,22 @@
 .waBubbleOut {
   background: #1f8a4c;
   border-radius: 16px 16px 6px 16px;
+}
+
+.waPhoto {
+  display: block;
+  width: min(260px, 72vw);
+  height: auto;
+  border-radius: 12px;
+  background: #111;
+}
+
+.waPhotoCaption {
+  margin-top: 8px;
+}
+
+.waBubble a:has(.waPhoto) {
+  text-decoration: none;
 }
 
 .waBubble a {
