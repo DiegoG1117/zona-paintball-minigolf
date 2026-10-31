@@ -3,6 +3,7 @@ import {
   listenWhatsappChats,
   listenWhatsappMessages,
   openWhatsappInbox,
+  sendWhatsappReply,
 } from '../../services/whatsappChatsService.js'
 import './whatsappChatsView.css'
 
@@ -96,6 +97,9 @@ function WhatsappChatsView() {
   const [selectedId, setSelectedId] = useState('')
   const [messages, setMessages] = useState([])
   const [search, setSearch] = useState('')
+  const [draft, setDraft] = useState('')
+  const [sending, setSending] = useState(false)
+  const [sendError, setSendError] = useState('')
   const stickToBottom = useRef(true)
   const scrollerRef = useRef(null)
 
@@ -159,7 +163,27 @@ function WhatsappChatsView() {
 
   function openChat(id) {
     stickToBottom.current = true
+    setDraft('')
+    setSendError('')
     setSelectedId(id)
+  }
+
+  async function submitReply(event) {
+    event.preventDefault()
+    const text = draft.trim()
+    const phone = selected?.phone || selected?.id
+    if (!text || !phone || sending) return
+    setSending(true)
+    setSendError('')
+    try {
+      await sendWhatsappReply(phone, text)
+      setDraft('')
+      stickToBottom.current = true
+    } catch (error) {
+      setSendError(error?.message || 'No se pudo enviar el mensaje.')
+    } finally {
+      setSending(false)
+    }
   }
 
   if (phase === 'loading') {
@@ -263,6 +287,33 @@ function WhatsappChatsView() {
                 )
               })}
             </div>
+            <form className="waComposer" onSubmit={submitReply}>
+              <label className="waComposerLabel" htmlFor="waReply">Mensaje para este cliente</label>
+              <div className="waComposerRow">
+                <textarea
+                  id="waReply"
+                  className="waComposerInput"
+                  value={draft}
+                  rows={2}
+                  placeholder="Escribe un mensaje"
+                  disabled={sending}
+                  onChange={(event) => {
+                    setDraft(event.target.value)
+                    if (sendError) setSendError('')
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' && !event.shiftKey) {
+                      event.preventDefault()
+                      event.currentTarget.form?.requestSubmit()
+                    }
+                  }}
+                />
+                <button className="waSend" type="submit" disabled={sending || !draft.trim()}>
+                  {sending ? 'Enviando…' : 'Enviar'}
+                </button>
+              </div>
+              {sendError ? <p className="waSendError">{sendError}</p> : null}
+            </form>
           </>
         ) : (
           <p className="waEmpty">Elige una conversación</p>
