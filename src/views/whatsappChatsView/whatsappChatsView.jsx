@@ -168,11 +168,22 @@ function WhatsappChatsView() {
     setSelectedId(id)
   }
 
+  function clientCanReceive() {
+    const lastInbound = [...messages].reverse().find((message) => message.direction === 'in')
+    const at = toDate(lastInbound?.at)
+    if (!at) return false
+    return Date.now() - at.getTime() < 24 * 60 * 60 * 1000
+  }
+
   async function submitReply(event) {
     event.preventDefault()
     const text = draft.trim()
     const phone = selected?.phone || selected?.id
     if (!text || !phone || sending) return
+    if (!clientCanReceive()) {
+      setSendError('Ese cliente no ha escrito en las últimas 24 horas. WhatsApp no deja enviar el mensaje.')
+      return
+    }
     setSending(true)
     setSendError('')
     try {
