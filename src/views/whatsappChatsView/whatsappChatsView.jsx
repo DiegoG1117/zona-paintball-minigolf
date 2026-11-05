@@ -3,6 +3,8 @@ import {
   listenWhatsappChats,
   listenWhatsappMessages,
   openWhatsappInbox,
+  requestWhatsappSummary,
+  saveWhatsappSummary,
   sendWhatsappReply,
 } from '../../services/whatsappChatsService.js'
 import './whatsappChatsView.css'
@@ -100,8 +102,11 @@ function WhatsappChatsView() {
   const [draft, setDraft] = useState('')
   const [sending, setSending] = useState(false)
   const [sendError, setSendError] = useState('')
+  const [summaryBusyId, setSummaryBusyId] = useState('')
+  const [summaryError, setSummaryError] = useState('')
   const stickToBottom = useRef(true)
   const scrollerRef = useRef(null)
+  const selectedIdRef = useRef('')
 
   useEffect(() => {
     const nextDb = openWhatsappInbox()
@@ -134,11 +139,13 @@ function WhatsappChatsView() {
     return listenWhatsappMessages(db, selectedId, setMessages, () => setPhase('error'))
   }, [db, selectedId])
 
+  const openResumen = chats.find((chat) => chat.id === selectedId)?.resumen || ''
+
   useLayoutEffect(() => {
     const scroller = scrollerRef.current
     if (!scroller || !stickToBottom.current) return
     scroller.scrollTop = scroller.scrollHeight
-  }, [messages, selectedId])
+  }, [messages, selectedId, openResumen])
 
   const filtered = useMemo(() => {
     const needle = search.trim().toLowerCase()
@@ -153,6 +160,9 @@ function WhatsappChatsView() {
   const selected = chats.find((chat) => chat.id === selectedId) || null
   const showList = wide || !selectedId
   const showThread = wide || Boolean(selectedId)
+  const summaryText = String(selected?.resumen || '').trim()
+  const summaryBusy = Boolean(selectedId) && summaryBusyId === selectedId
+  selectedIdRef.current = selectedId
 
   function onMessagesScroll() {
     const scroller = scrollerRef.current
@@ -165,6 +175,7 @@ function WhatsappChatsView() {
     stickToBottom.current = true
     setDraft('')
     setSendError('')
+    setSummaryError('')
     setSelectedId(id)
   }
 
@@ -173,6 +184,30 @@ function WhatsappChatsView() {
     const at = toDate(lastInbound?.at)
     if (!at) return false
     return Date.now() - at.getTime() < 24 * 60 * 60 * 1000
+  }
+
+  async function generateSummary() {
+    if (!selected || !db || summaryBusy || summaryText) return
+    const chatId = selected.id
+    const phone = selected.phone || selected.id
+    const usable = messages.filter((message) => String(message.text || '').trim())
+    if (!usable.length) {
+      setSummaryError('No hay mensajes para resumir.')
+      return
+    }
+    setSummaryBusyId(chatId)
+    setSummaryError('')
+    try {
+      const resumen = await requestWhatsappSummary(phone, usable)
+      await saveWhatsappSummary(db, chatId, resumen)
+      if (selectedIdRef.current === chatId) stickToBottom.current = true
+    } catch (error) {
+      if (selectedIdRef.current === chatId) {
+        setSummaryError(error?.message || 'No se pudo generar el resumen.')
+      }
+    } finally {
+      setSummaryBusyId((current) => (current === chatId ? '' : current))
+    }
   }
 
   async function submitReply(event) {
@@ -261,15 +296,26 @@ function WhatsappChatsView() {
                 <span className="waName">{selected.name || formatPhone(selected.id)}</span>
                 <span className="waPhone">{formatPhone(selected.phone || selected.id)}</span>
               </div>
-              <a
-                className="waOpenChat"
-                href={whatsappLink(selected.phone || selected.id)}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Ir al chat
-              </a>
+              <div className="waHeadActions">
+                <button
+                  type="button"
+                  className="waSummaryBtn"
+                  disabled={summaryBusy || Boolean(summaryText)}
+                  onClick={generateSummary}
+                >
+                  {summaryBusy ? 'Generando…' : 'Generar resumen'}
+                </button>
+                <a
+                  className="waOpenChat"
+                  href={whatsappLink(selected.phone || selected.id)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Ir al chat
+                </a>
+              </div>
             </header>
+            {summaryError ? <p className="waSummaryError">{summaryError}</p> : null}
             <div className="waMessages" ref={scrollerRef} onScroll={onMessagesScroll}>
               {messages.map((message) => {
                 const outgoing = message.direction === 'out'
@@ -297,6 +343,12 @@ function WhatsappChatsView() {
                   </article>
                 )
               })}
+              {summaryText ? (
+                <article className="waMsg waMsgSummary">
+                  <div className="waBubble waBubbleSummary">{summaryText}</div>
+                  <div className="waMeta">Resumen</div>
+                </article>
+              ) : null}
             </div>
             <form className="waComposer" onSubmit={submitReply}>
               <label className="waComposerLabel" htmlFor="waReply">Mensaje para este cliente</label>

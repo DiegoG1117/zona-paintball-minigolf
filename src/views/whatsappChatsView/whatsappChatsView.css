@@ -151,8 +151,32 @@
   flex: 1;
 }
 
-.waOpenChat {
+.waHeadActions {
   margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.waInbox .waSummaryBtn {
+  background: #243049;
+  color: #fff;
+  border-radius: 999px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.waInbox .waSummaryBtn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.waOpenChat {
   flex: 0 0 auto;
   background: #1f8a4c;
   color: #fff;
@@ -248,11 +272,17 @@
   cursor: default;
 }
 
-.waSendError {
+.waSendError,
+.waSummaryError {
   margin: 8px 0 0;
   color: #ffb4b4;
   font-size: 13px;
   line-height: 1.35;
+}
+
+.waSummaryError {
+  margin: 0;
+  padding: 8px 14px 0;
 }
 
 .waMsg {
@@ -269,6 +299,12 @@
 .waMsgOut {
   align-self: flex-end;
   align-items: flex-end;
+}
+
+.waMsgSummary {
+  align-self: center;
+  align-items: center;
+  max-width: min(92%, 460px);
 }
 
 .waBubble {
@@ -288,6 +324,13 @@
 .waBubbleOut {
   background: #1f8a4c;
   border-radius: 16px 16px 6px 16px;
+}
+
+.waBubbleSummary {
+  background: #3d3424;
+  border: 1px solid rgba(255, 214, 140, 0.28);
+  border-radius: 16px;
+  font-size: 14px;
 }
 
 .waPhoto {
